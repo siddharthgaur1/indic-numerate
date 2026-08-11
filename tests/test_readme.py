@@ -27,9 +27,13 @@ REQUIRED_CAVEATS = [
     "one valid decomposition, not the only one",
     "Single annotator",
     "Published reports change",
-    "Sector labels are assigned by the maintainer",
+    "Sector labels come from NSE's own industry column",
     "Restated figures follow the citing document",
     "Adapters are thin",
+    "The corpus frame is one index, large-cap only",
+    "Constituents are as of the fetch date",
+    "Fiscal years are limited to FY2024",
+    "only the latest submission is",
 ]
 
 

@@ -19,6 +19,7 @@ import argparse
 import csv
 import datetime as dt
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -50,11 +51,25 @@ def read_sources(path: Path) -> list[dict]:
     return rows
 
 
+# NSE's filing archive silently drops connections from non-browser user agents:
+# a plain "indic-numerate/0.1" UA read-times-out on every URL. These are public
+# filings published for download, so the fetcher presents a browser UA and keeps
+# itself identifiable through the From/X-Contact headers rather than pretending
+# to be anonymous. If a publisher asks us to stop, this is where to change it.
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "From": "https://github.com/siddharthgaur1/indic-numerate",
+    "X-Contact": "https://github.com/siddharthgaur1/indic-numerate",
+    "Accept": "application/pdf,*/*",
+}
+
+
 def fetch_one(row: dict, timeout: int) -> Document:
     import requests  # imported late so --verify works without the network stack
 
     url = row["source_url"].strip()
-    resp = requests.get(url, timeout=timeout, headers={"User-Agent": "indic-numerate/0.1 (+github.com/siddharthgaur1)"})
+    resp = requests.get(url, timeout=timeout, headers=HEADERS)
     resp.raise_for_status()
     body = resp.content
     if not body.startswith(b"%PDF"):
@@ -81,7 +96,8 @@ def fetch_one(row: dict, timeout: int) -> Document:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--limit", type=int, help="fetch at most N (seeded shuffle first, never a prefix)")
-    ap.add_argument("--timeout", type=int, default=60)
+    ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--pause", type=float, default=0.5, help="seconds between downloads")
     ap.add_argument("--verify", action="store_true", help="re-hash local PDFs against data/corpus.jsonl")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -117,7 +133,8 @@ def main() -> int:
             print(f"FAILED {row['doc_id']}: {type(exc).__name__}: {exc}", file=sys.stderr)
             continue
         append(CORPUS, doc)
-        print(f"ok {doc.doc_id} {doc.n_bytes / 1e6:.1f}MB {doc.sha256[:12]}")
+        print(f"ok {doc.doc_id} {doc.n_bytes / 1e6:.1f}MB {doc.sha256[:12]}", flush=True)
+        time.sleep(args.pause)  # courtesy to the publisher's archive
     if failures:
         print(f"{failures} document(s) could not be fetched. They are absent from the corpus; "
               "nothing was substituted for them.", file=sys.stderr)

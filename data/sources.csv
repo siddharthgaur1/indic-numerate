@@ -1,5 +1,94 @@
 doc_id,company,sector,fiscal_year,source_url
-# One row per annual report. doc_id is lowercase-hyphenated and becomes the PDF
-# filename. source_url must be the publisher's own URL for the PDF.
-# Example (replace with real rows; nothing is fetched from this comment):
-# infosys-fy2023,Infosys Limited,it_services,FY2023,https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-23.pdf
+adanient-fy2024,Adani Enterprises Ltd.,metals,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24053_ADANIENT_2023_2024_29052024202649.pdf
+adanient-fy2025,Adani Enterprises Ltd.,metals,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26463_ADANIENT_2024_2025_A_29052025234750.pdf
+adaniports-fy2025,Adani Ports and Special Economic Zone Ltd.,infrastructure,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26467_ADANIPORTS_2024_2025_A_30052025204446.pdf
+apollohosp-fy2024,Apollo Hospitals Enterprise Ltd.,pharma,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24870_APOLLOHOSP_2023_2024_08082024153312.pdf
+apollohosp-fy2025,Apollo Hospitals Enterprise Ltd.,pharma,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27311_APOLLOHOSP_2024_2025_A_06082025194352.pdf
+asianpaint-fy2024,Asian Paints Ltd.,other,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24066_ASIANPAINT_2023_2024_3105202418521.pdf
+asianpaint-fy2025,Asian Paints Ltd.,other,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26496_ASIANPAINT_2024_2025_A_03062025224818.pdf
+axisbank-fy2024,Axis Bank Ltd.,banking,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24255_AXISBANK_2023_2024_02072024133738.pdf
+axisbank-fy2025,Axis Bank Ltd.,banking,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26622_AXISBANK_2024_2025_A_27062025104637.pdf
+bajaj-auto-fy2024,Bajaj Auto Ltd.,auto,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24163_BAJAJ-AUTO_2023_2024_2106202418557.pdf
+bajaj-auto-fy2025,Bajaj Auto Ltd.,auto,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26883_BAJAJ-AUTO_2024_2025_A_12072025202033.pdf
+bajajfinsv-fy2024,Bajaj Finserv Ltd.,nbfc,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24206_BAJAJFINSV_2023_2024_27062024192051.pdf
+bajajfinsv-fy2025,Bajaj Finserv Ltd.,nbfc,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26694_BAJAJFINSV_2024_2025_A_02072025205929.pdf
+bajfinance-fy2024,Bajaj Finance Ltd.,nbfc,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24208_BAJFINANCE_2023_2024_27062024194955.pdf
+bajfinance-fy2025,Bajaj Finance Ltd.,nbfc,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26674_BAJFINANCE_2024_2025_A_02072025000055.pdf
+bel-fy2024,Bharat Electronics Ltd.,other,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24820_BEL_2023_2024_05082024192715.pdf
+bel-fy2025,Bharat Electronics Ltd.,other,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27292_BEL_2024_2025_A_05082025205207.pdf
+bhartiartl-fy2024,Bharti Airtel Ltd.,telecom,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24718_BHARTIARTL_2023_2024_29072024233637.pdf
+bhartiartl-fy2025,Bharti Airtel Ltd.,telecom,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26982_BHARTIARTL_2024_2025_A_16072025225738.pdf
+cipla-fy2024,Cipla Ltd.,pharma,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24682_CIPLA_2023_2024_2607202421292.pdf
+cipla-fy2025,Cipla Ltd.,pharma,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26576_CIPLA_2024_2025_A_19062025210950.pdf
+coalindia-fy2024,Coal India Ltd.,energy,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24687_COALINDIA_2023_2024_2707202415317.pdf
+coalindia-fy2025,Coal India Ltd.,energy,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27257_COALINDIA_2024_2025_A_04082025110141.pdf
+drreddy-fy2024,Dr. Reddy's Laboratories Ltd.,pharma,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24273_DRREDDY_2023_2024_02072024194727.pdf
+drreddy-fy2025,Dr. Reddy's Laboratories Ltd.,pharma,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26644_DRREDDY_2024_2025_A_30062025163510.pdf
+eichermot-fy2024,Eicher Motors Ltd.,auto,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24722_EICHERMOT_2023_2024_3007202417814.pdf
+eichermot-fy2025,Eicher Motors Ltd.,auto,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27138_EICHERMOT_2024_2025_A_28072025184405.pdf
+eternal-fy2024,Eternal Ltd.,other,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24797_ZOMATO_2023_2024_03082024162627.pdf
+eternal-fy2025,Eternal Ltd.,other,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27100_ETERNAL_2024_2025_A_24072025201840.pdf
+grasim-fy2024,Grasim Industries Ltd.,infrastructure,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24595_GRASIM_2023_2024_19072024183929.pdf
+grasim-fy2025,Grasim Industries Ltd.,infrastructure,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27780_GRASIM_2024_2025_A_16490387_28082025113556.pdf
+hcltech-fy2024,HCL Technologies Ltd.,it_services,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24617_HCLTECH_2023_2024_22072024183544.pdf
+hcltech-fy2025,HCL Technologies Ltd.,it_services,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27254_HCLTECH_2024_2025_A_02082025194851.pdf
+hdfcbank-fy2024,HDFC Bank Ltd.,banking,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24576_HDFCBANK_2023_2024_18072024183453.pdf
+hdfcbank-fy2025,HDFC Bank Ltd.,banking,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27115_HDFCBANK_2024_2025_U_25072025220054.pdf
+hdfclife-fy2024,HDFC Life Insurance Company Ltd.,insurance,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24168_HDFCLIFE_2023_2024_2206202422920.pdf
+hdfclife-fy2025,HDFC Life Insurance Company Ltd.,insurance,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26594_HDFCLIFE_2024_2025_A_23062025235232.pdf
+hindalco-fy2024,Hindalco Industries Ltd.,metals,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24716_HINDALCO_2023_2024_29072024213852.pdf
+hindalco-fy2025,Hindalco Industries Ltd.,metals,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27144_HINDALCO_2024_2025_A_28072025195347.pdf
+hindunilvr-fy2025,Hindustan Unilever Ltd.,fmcg,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26462_HINDUNILVR_2024_2025_A_29052025214241.pdf
+icicibank-fy2024,ICICI Bank Ltd.,banking,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_26260_ICICIBANK_2023_2024_26092024174020.pdf
+icicibank-fy2025,ICICI Bank Ltd.,banking,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27289_ICICIBANK_2024_2025_A_05082025201317.pdf
+indigo-fy2024,InterGlobe Aviation Ltd.,infrastructure,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24753_INDIGO_2023_2024_31072024222919.pdf
+indigo-fy2025,InterGlobe Aviation Ltd.,infrastructure,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27116_INDIGO_2024_2025_A_26072025103933.pdf
+infy-fy2024,Infosys Ltd.,it_services,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24073_INFY_2023_2024_03062024153021.pdf
+infy-fy2025,Infosys Ltd.,it_services,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26481_INFY_2024_2025_A_02062025153945.pdf
+itc-fy2024,ITC Ltd.,fmcg,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24214_ITC_2023_2024_28062024112224.pdf
+itc-fy2025,ITC Ltd.,fmcg,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26624_ITC_2024_2025_A_27062025150548.pdf
+jiofin-fy2024,Jio Financial Services Ltd.,nbfc,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24864_JIOFIN_2023_2024_0808202401621.pdf
+jiofin-fy2025,Jio Financial Services Ltd.,nbfc,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27276_JIOFIN_2024_2025_A_05082025125059.pdf
+jswsteel-fy2024,JSW Steel Ltd.,metals,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24311_JSWSTEEL_2023_2024_0407202420444.pdf
+jswsteel-fy2025,JSW Steel Ltd.,metals,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26716_JSWSTEEL_2024_2025_A_03072025232355.pdf
+kotakbank-fy2024,Kotak Mahindra Bank Ltd.,banking,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_26266_KOTAKBANK_2023_2024_27092024172838.pdf
+kotakbank-fy2025,Kotak Mahindra Bank Ltd.,banking,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27794_KOTAKBANK_2024_2025_A_12174639_28082025142226.pdf
+lt-fy2024,Larsen & Toubro Ltd.,infrastructure,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24119_LT_2023_2024_1106202418528.pdf
+lt-fy2025,Larsen & Toubro Ltd.,infrastructure,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26451_LT_2024_2025_A_26052025131455.pdf
+maruti-fy2024,Maruti Suzuki India Ltd.,auto,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_26250_MARUTI_2023_2024_26092024102330.pdf
+maruti-fy2025,Maruti Suzuki India Ltd.,auto,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27293_MARUTI_2024_2025_A_05082025210558.pdf
+maxhealth-fy2024,Max Healthcare Institute Ltd.,pharma,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_25159_MAXHEALTH_2023_2024_26082024234252.pdf
+maxhealth-fy2025,Max Healthcare Institute Ltd.,pharma,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26742_MAXHEALTH_2024_2025_A_04072025211500.pdf
+nestleind-fy2024,Nestle India Ltd.,fmcg,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24138_NESTLEIND_2023_2024_15062024233329.pdf
+nestleind-fy2025,Nestle India Ltd.,fmcg,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26487_NESTLEIND_2024_2025_A_03062025002440.pdf
+ntpc-fy2024,NTPC Ltd.,energy,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24828_NTPC_2023_2024_06082024115115.pdf
+ntpc-fy2025,NTPC Ltd.,energy,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27336_NTPC_2024_2025_A_07082025183440.pdf
+ongc-fy2024,Oil & Natural Gas Corporation Ltd.,energy,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24861_ONGC_2023_2024_07082024234141.pdf
+ongc-fy2025,Oil & Natural Gas Corporation Ltd.,energy,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27347_ONGC_2024_2025_A_07082025205710.pdf
+powergrid-fy2024,Power Grid Corporation of India Ltd.,energy,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24747_POWERGRID_2023_2024_31072024172055.pdf
+powergrid-fy2025,Power Grid Corporation of India Ltd.,energy,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27256_POWERGRID_2024_2025_A_03082025200555.pdf
+reliance-fy2024,Reliance Industries Ltd.,energy,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24850_RELIANCE_2023_2024_07082024143222.pdf
+reliance-fy2025,Reliance Industries Ltd.,energy,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27322_RELIANCE_2024_2025_A_07082025114457.pdf
+sbilife-fy2024,SBI Life Insurance Company Ltd.,insurance,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24795_SBILIFE_2023_2024_0308202415546.pdf
+sbilife-fy2025,SBI Life Insurance Company Ltd.,insurance,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27343_SBILIFE_2024_2025_A_07082025191121.pdf
+sbin-fy2024,State Bank of India,banking,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24037_SBIN_2023_2024_27052024232418.pdf
+sbin-fy2025,State Bank of India,banking,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26445_SBIN_2024_2025_A_21052025215909.pdf
+shriramfin-fy2024,Shriram Finance Ltd.,nbfc,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24341_SHRIRAMFIN_2023_2024_06072024172245.pdf
+shriramfin-fy2025,Shriram Finance Ltd.,nbfc,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26597_SHRIRAMFIN_2024_2025_A_24062025170941.pdf
+sunpharma-fy2024,Sun Pharmaceutical Industries Ltd.,pharma,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24355_SUNPHARMA_2023_2024_08072024153247.pdf
+sunpharma-fy2025,Sun Pharmaceutical Industries Ltd.,pharma,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26732_SUNPHARMA_2024_2025_A_04072025175058.pdf
+tataconsum-fy2025,Tata Consumer Products Ltd.,fmcg,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26447_TATACONSUM_2024_2025_A_22052025230755.pdf
+tatasteel-fy2024,Tata Steel Ltd.,metals,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24166_TATASTEEL_2023_2024_2206202419194.pdf
+tatasteel-fy2025,Tata Steel Ltd.,metals,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26523_TATASTEEL_2024_2025_A_06062025193058.pdf
+tcs-fy2025,Tata Consultancy Services Ltd.,it_services,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26456_TCS_2024_2025_A_27052025233502.pdf
+techm-fy2024,Tech Mahindra Ltd.,it_services,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24212_TECHM_2023_2024_27062024232127.pdf
+techm-fy2025,Tech Mahindra Ltd.,it_services,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26592_TECHM_2024_2025_A_23062025224043.pdf
+titan-fy2024,Titan Company Ltd.,other,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24142_TITAN_2023_2024_18062024113823.pdf
+titan-fy2025,Titan Company Ltd.,other,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26625_TITAN_2024_2025_A_27062025152121.pdf
+tmpv-fy2024,Tata Motors Passenger Vehicles Ltd.,auto,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24058_TATAMOTORS_2023_2024_310520242633.pdf
+tmpv-fy2025,Tata Motors Passenger Vehicles Ltd.,auto,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27753_TATAMOTORS_2024_2025_A_29318961_26082025223051.pdf
+trent-fy2025,Trent Ltd.,other,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26543_TRENT_2024_2025_A_11062025214523.pdf
+ultracemco-fy2024,UltraTech Cement Ltd.,infrastructure,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_26244_ULTRACEMCO_2023_2024_250920241923.pdf
+ultracemco-fy2025,UltraTech Cement Ltd.,infrastructure,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_27126_ULTRACEMCO_2024_2025_A_28072025142546.pdf
+wipro-fy2024,Wipro Ltd.,it_services,FY2024,https://nsearchives.nseindia.com/annual_reports/AR_24178_WIPRO_2023_2024_24062024195724.pdf
+wipro-fy2025,Wipro Ltd.,it_services,FY2025,https://nsearchives.nseindia.com/annual_reports/AR_26582_WIPRO_2024_2025_A_21062025124943.pdf

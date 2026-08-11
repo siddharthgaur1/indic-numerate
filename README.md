@@ -114,8 +114,12 @@ These are load-bearing. They stay in this file; diluting one is a regression.
 7. **Published reports change.** Companies silently replace PDFs. Every document is
    pinned by SHA-256; `python scripts/fetch_reports.py --verify` tells you whether
    your copy is the one the items were written against.
-8. **Sector labels are assigned by the maintainer**, not taken from an exchange
-   classification, and coarse ones (`other`) absorb the awkward cases.
+8. **Sector labels come from NSE's own industry column, with one hand-made
+   split.** The index lumps banks, NBFCs and insurers into "Financial Services";
+   that one is split by the maintainer against a symbol list in
+   `scripts/build_sources.py`, and it is judgement, not classification. Coarse
+   NSE industries (`Consumer Durables`, `Chemicals`, `Services`) collapse to
+   `other`, so `other` is a bucket, not a sector.
 9. **Restated figures follow the citing document.** An item anchored on the FY2023
    report uses FY2023's restated comparatives, which may differ from what the
    FY2022 report published. This is a deliberate choice, documented in the
@@ -123,6 +127,23 @@ These are load-bearing. They stay in this file; diluting one is a regression.
 10. **Adapters are thin.** No retrieval pipeline, no agent scaffolding, no tools.
     Numbers here are for a model answering from a document reference, and they are
     not comparable to a full RAG system's.
+11. **The corpus frame is one index, large-cap only.** Documents come from the
+    NIFTY 50 constituent list as published by NSE (`data/frame.csv`), so mid-cap
+    and small-cap reporting practice is absent — and those are where the messier
+    unit notation lives. The frame is stated rather than convenient: guessing PDF
+    URLs off investor-relations sites returns 403 for most large Indian issuers,
+    and a corpus built that way would be stratified by bot policy.
+12. **Constituents are as of the fetch date, not as of each fiscal year.** A
+    company that entered the index recently is included for earlier years too, and
+    one that left is absent. This is survivorship bias in the corpus, and it is not
+    corrected.
+13. **Fiscal years are limited to FY2024–FY2025.** NSE's filing archive serves only
+    recent submissions, so the corpus cannot reach further back without a different
+    source. Restatement items are therefore limited to comparatives printed inside
+    those reports.
+14. **Where a company filed a revised annual report, only the latest submission is
+    in the corpus.** The superseded filing is dropped, not recorded as a second
+    document.
 
 ## Repository layout
 
