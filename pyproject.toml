@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "indic-numerate"
+version = "0.1.0"
+description = "A decomposition-scored benchmark for multi-step numerical reasoning over Indian annual reports"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = ["pydantic>=2.6", "requests>=2.31", "pdfplumber>=0.11"]
+
+# Only the maintainer runs these. Declared rather than left implicit, for the
+# same reason indic-reg-bench declares its hf extra: a fresh clone otherwise
+# hits ImportError at the point of use with nothing to tell it what to install.
+[project.optional-dependencies]
+hf = ["huggingface_hub>=0.23"]
+api = ["anthropic>=0.40", "openai>=1.40"]
+dev = ["pytest>=8.0"]
+
+[project.urls]
+Homepage = "https://github.com/siddharthgaur1/indic-numerate"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests", "."]
