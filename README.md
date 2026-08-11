@@ -8,11 +8,13 @@ Sibling of [indic-reg-bench](https://github.com/siddharthgaur1/indic-reg-bench)
 (regulatory text classification). Same licence, same conventions, same rules about
 what may be claimed. Apache-2.0.
 
-> **Status: pre-data.** The schema, guidelines, scorers, harness and validators are
-> complete and tested. **No benchmark items exist yet** and no baselines have been
-> run. Every number below that depends on items is stated as pending, not
-> estimated. Items are authored by hand from real published annual reports; nothing
-> in this repository generates a document, a question, or a gold answer.
+> **Status: corpus fetched, no items yet.** The schema, guidelines, scorers,
+> harness and validators are complete and tested, and the corpus is real: 92
+> annual reports from 49 NIFTY 50 companies, each pinned by SHA-256
+> (`data/corpus.jsonl`), split train/test. **No benchmark items exist yet** and no
+> baselines have been run. Every number below that depends on items is stated as
+> pending, not estimated. Items are authored by hand from those reports; nothing in
+> this repository generates a document, a question, or a gold answer.
 
 ---
 
@@ -58,11 +60,11 @@ An item that cannot be scored on all four axes does not parse.
 <!-- BEGIN GENERATED COUNTS -->
 | | |
 |---|---|
-| documents | 0 |
+| documents | 92 |
 | items | 0 (0 train / 0 test) |
 | unit-trap items | 0 |
 | reasoning depth | none yet |
-| sectors / fiscal years | 0 / 0 |
+| sectors / fiscal years | 12 / 2 |
 | seed | 20240917 |
 <!-- END GENERATED COUNTS -->
 
@@ -162,8 +164,11 @@ src/indic_numerate/
   corpus.py       document provenance (URL, fetch date, SHA-256)
 docs/
   annotation-guidelines.md
+  corpus-findings.md          what building the corpus turned up
+  bugs-that-looked-like-results.md
   submission.md
 scripts/
+  build_sources.py      source list from a published index constituent frame
   fetch_reports.py      fetch real PDFs, record provenance
   build_splits.py       stratified seeded splits
   write_items.py        authoring CLI (maintainer only)
@@ -178,9 +183,11 @@ scripts/
 
 ```bash
 pip install -e ".[dev]"
-pytest                                   # 200+ tests, no network, no API keys
+pytest                                   # 260+ tests, no network, no API keys
 
-python scripts/fetch_reports.py          # needs data/sources.csv
+python scripts/build_sources.py          # source list from the NIFTY 50 frame
+python scripts/fetch_reports.py          # ~1.9 GB of real PDFs, hashed as fetched
+python scripts/fetch_reports.py --verify # confirm your copies match the corpus index
 python scripts/build_splits.py
 python scripts/oracle_ceiling.py         # must pass before any result is published
 python scripts/run_eval.py --adapter ollama:llama3.2
