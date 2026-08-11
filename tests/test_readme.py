@@ -60,8 +60,9 @@ def test_readme_does_not_claim_results_while_there_are_none():
     """Guards the specific failure mode of publishing numbers before the oracle
     ceiling has been run: while there are zero items, the README must say so."""
     if current_counts(ROOT)["items"] == 0:
-        assert "Status: pre-data" in README
+        assert "No benchmark items exist yet" in README
         assert "Pending" in README or "pending" in README
+        assert "no baselines have been run" in README.lower()
 
 
 def test_decomposition_rationale_leads_the_readme():
