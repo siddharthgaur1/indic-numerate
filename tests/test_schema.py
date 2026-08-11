@@ -19,8 +19,10 @@ def test_period_basis():
     assert period_basis("FY2023") == "FY"
     assert period_basis("CY2022") == "CY"
     assert period_basis("Q3FY2024") == "FY"
-    with pytest.raises(ValueError, match="FY2023"):
-        period_basis("2023-24")
+    with pytest.raises(ValueError, match="must be written canonically as 'FY2024'"):
+        period_basis("2023-24")  # parseable, but non-canonical spellings split the strata
+    with pytest.raises(ValueError, match="cannot parse period"):
+        period_basis("last year")
 
 
 def test_malformed_period_named_in_message():

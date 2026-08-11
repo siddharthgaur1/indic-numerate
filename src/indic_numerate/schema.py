@@ -14,6 +14,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from .units import UnitError, parse_period
+
 MONETARY_UNITS = ("rupees", "thousand", "lakh", "crore", "million", "billion")
 DIMENSIONLESS_UNITS = ("percent", "ratio", "days", "count")
 Unit = Literal[
@@ -28,19 +30,26 @@ Sector = Literal[
     "energy", "telecom", "infrastructure", "insurance", "other",
 ]
 
-PERIOD_RE = re.compile(r"^(FY|CY|Q[1-4]FY)(\d{4})$")
 STEP_ID_RE = re.compile(r"^s(\d+)$")
 FIG_ID_RE = re.compile(r"^f\d+$")
 
 
 def period_basis(period: str) -> str:
-    """'FY2023' -> 'FY'; 'CY2022' -> 'CY'; 'Q3FY2024' -> 'FY'."""
-    m = PERIOD_RE.match(period)
-    if m is None:
+    """'FY2023' -> 'FY'; 'CY2022' -> 'CY'; 'Q3FY2024' -> 'FY'.
+
+    Annotated periods must already be canonical: the parser accepts 'FY23' and
+    '2022-23', but storing those would let two spellings of one period sit in
+    the data and defeat stratification by fiscal year.
+    """
+    try:
+        canonical = parse_period(period)
+    except UnitError as exc:
+        raise ValueError(str(exc)) from exc
+    if canonical != period:
         raise ValueError(
-            f"period {period!r} must look like FY2023, CY2022 or Q3FY2024"
+            f"period {period!r} must be written canonically as {canonical!r}"
         )
-    return "CY" if m.group(1) == "CY" else "FY"
+    return "CY" if canonical.lstrip("Q1234")[:2] == "CY" else "FY"
 
 
 class SourceFigure(BaseModel):
