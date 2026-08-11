@@ -27,6 +27,9 @@ from indic_numerate.rng import SEED, rng, shuffled, take
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = sorted(ROOT.glob("src/indic_numerate/*.py")) + sorted(ROOT.glob("scripts/*.py"))
 MARKER = "sampling-frame:"
+# For slices that are not samples at all (truncating an error message, say).
+# Separate marker so the two claims stay distinguishable in review.
+NOT_A_SAMPLE = "not-a-sample:"
 
 # Calls that produce a collection. A slice of one of these, or of a name bound
 # to one, is a sample -- and therefore must be shuffled first.
@@ -105,7 +108,8 @@ class _SliceFinder(ast.NodeVisitor):
                 (isinstance(base, ast.Name) and base.id in self.shuffled_names)
                 or (_call_name(base) in SAFE_CALLS)
             )
-            marked = MARKER in self.lines[node.lineno - 1]
+            line = self.lines[node.lineno - 1]
+            marked = MARKER in line or NOT_A_SAMPLE in line
             if is_collection and not already_shuffled and not marked:
                 self.hits.append(f"{self.path.name}:{node.lineno}: slice of {ast.unparse(base)}")
         self.generic_visit(node)
@@ -158,13 +162,15 @@ def test_the_marker_requires_an_explanation(tmp_path):
     assert not finder.hits
 
 
-def test_every_marker_in_the_repo_says_where_the_shuffle_happened():
-    """The marker must name its shuffle. `# sampling-frame:` alone is a shrug."""
+def test_every_marker_in_the_repo_carries_a_reason():
+    """A bare marker is a shrug. It must say where the shuffle happened, or why
+    the slice is not a sample."""
     vague = []
     for path in SOURCES:
         for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-            if MARKER in line and len(line.split(MARKER, 1)[1].split()) < 3:
-                vague.append(f"{path.relative_to(ROOT)}:{lineno}")
+            for marker in (MARKER, NOT_A_SAMPLE):
+                if marker in line and len(line.split(marker, 1)[1].split()) < 3:
+                    vague.append(f"{path.relative_to(ROOT)}:{lineno}")
     assert not vague, "sampling-frame markers must name where the shuffle happened: " + ", ".join(vague)
 
 

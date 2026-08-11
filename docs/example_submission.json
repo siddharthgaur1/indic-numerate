@@ -1,0 +1,23 @@
+{
+  "model": "example/echo",
+  "model_version": "0.0.0",
+  "contact": "you@example.com",
+  "open_weights": true,
+  "notes": "Shape example for scripts/validate_submission.py --no-items. Not a result.",
+  "predictions": [
+    {
+      "item_id": "example-doc-fy2023-01",
+      "figures": {
+        "f1": {"value": 1200, "unit": "crore"},
+        "f2": {"value": 1000, "unit": "crore"}
+      },
+      "periods": {"f1": "FY2023", "f2": "FY2022"},
+      "steps": {
+        "s1": {"value": 200, "unit": "crore"},
+        "s2": {"value": 20, "unit": "percent"}
+      },
+      "final_value": 20,
+      "final_unit": "percent"
+    }
+  ]
+}

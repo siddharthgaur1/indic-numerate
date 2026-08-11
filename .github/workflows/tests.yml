@@ -1,0 +1,34 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+
+      # Deterministic scorers only. Nothing here calls an API, so CI costs
+      # nothing and cannot be made to cost anything by a pull request.
+      - name: tests
+        run: pytest -q
+
+      - name: README counts are not stale
+        run: python scripts/update_readme.py --check
+
+      - name: submission validator accepts the example
+        run: python scripts/validate_submission.py docs/example_submission.json --no-items
+
+      # Regression gate: scores must not drop below results/baseline_floor.json.
+      # Skipped, loudly, while there are no baselines to regress from.
+      - name: regression gate
+        run: python scripts/check_regression.py

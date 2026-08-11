@@ -1,0 +1,5 @@
+doc_id,company,sector,fiscal_year,source_url
+# One row per annual report. doc_id is lowercase-hyphenated and becomes the PDF
+# filename. source_url must be the publisher's own URL for the PDF.
+# Example (replace with real rows; nothing is fetched from this comment):
+# infosys-fy2023,Infosys Limited,it_services,FY2023,https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-23.pdf
