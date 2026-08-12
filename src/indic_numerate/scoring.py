@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
 
 from .schema import Item
-from .units import UnitError, convert, family, same_period, to_base
+from .units import UnitError, convert, family, parse_unit, same_period, to_base
 
 RETRIEVAL_RTOL = Decimal("1e-9")  # digits are digits; this is float-noise slack only
 
@@ -57,11 +57,34 @@ class Prediction:
 
     @classmethod
     def from_dict(cls, d: dict) -> "Prediction":
+        """Parse a model's JSON.
+
+        Deliberately lenient in two narrow, documented ways, because this
+        benchmark measures arithmetic over documents and not a model's ability
+        to hit a JSON shape:
+
+        * a unit is normalised through `units.parse_unit`, so "%", "Rs. crore"
+          and "mn" are the units they obviously are. An unrecognisable unit is
+          kept verbatim so the scorer and the submission validator can still
+          name it in an error.
+        * `final_value` given as {"value": x, "unit": u} is unpacked, since that
+          is the shape the rest of the payload uses and models copy it.
+
+        The leniency stops there. A missing answer is missing, a wrong number is
+        wrong, and nothing is inferred from prose.
+        """
+        def unit_of(raw) -> str:
+            text = str(raw)
+            try:
+                return parse_unit(text)
+            except UnitError:
+                return text
+
         def pairs(key: str) -> dict[str, tuple[Decimal, str]]:
             out = {}
             for k, v in (d.get(key) or {}).items():
                 try:
-                    out[k] = (Decimal(str(v["value"])), str(v["unit"]))
+                    out[k] = (Decimal(str(v["value"])), unit_of(v["unit"]))
                 except (KeyError, TypeError, InvalidOperation) as exc:
                     raise ValueError(
                         f"prediction for item {d.get('item_id')!r}: {key}[{k!r}] must be "
@@ -70,6 +93,10 @@ class Prediction:
             return out
 
         fv = d.get("final_value")
+        final_unit = d.get("final_unit")
+        if isinstance(fv, dict) and "value" in fv:  # models copy the {value, unit} shape
+            final_unit = final_unit or fv.get("unit")
+            fv = fv["value"]
         try:
             final = None if fv is None else Decimal(str(fv))
         except InvalidOperation as exc:
@@ -82,7 +109,7 @@ class Prediction:
             periods={str(k): str(v) for k, v in (d.get("periods") or {}).items()},
             steps=pairs("steps"),
             final_value=final,
-            final_unit=d.get("final_unit"),
+            final_unit=None if final_unit is None else unit_of(final_unit),
             raw=str(d.get("raw", "")),
         )
 

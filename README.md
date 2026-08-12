@@ -123,23 +123,41 @@ repository exists to avoid.
 
 ### Provisional baseline (not a result)
 
-One model has been run, over the 4 draft test items, with the document supplied as
-the anchored pages plus four seeded distractor pages:
+One model has been run over the 8 test items, with the document supplied as the
+anchored pages plus two seeded distractor pages:
 
 | model | n | retrieval | units | intermediate | final | all four |
 |---|---|---|---|---|---|---|
-| ollama/llama3.2 (3B) | 4 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| ollama/llama3.2 (3B) `[ctx=distractors+2]` | 8 | 0.167 | 0.381 | 0.182 | 0.000 | 0.000 |
 
-Two of the four responses were not valid JSON; of the two that parsed, the model
-reported figures that appear nowhere in the document (`19 thousand`, `10 lakh`)
-and omitted a final answer entirely. So the zero is a genuine failure to do the
-task, not a harness artifact — but n=4, on unreviewed items, with a 3B model, is
-worth nothing as a published number. It lives in `results/provisional/` and is
-excluded from the leaderboard by `--provisional`.
+This is the decomposition doing its job. A single-score benchmark would report
+0.000 and tell you nothing. The axes say something specific: the model finds
+about one gold figure in six, handles units on rather more of what it does find,
+gets a fifth of the intermediates, and **never once reaches the right final
+answer** — the failure is in carrying a chain through, not only in reading.
+
+It is still not a result. n=8, on gold nobody has page-level reviewed, with a 3B
+model, in one context mode. It lives in `results/provisional/` and `--provisional`
+keeps it off the leaderboard.
 
 The two API adapters ship and are tested, but **no API-model baseline has been
 run**: no API key was available in this environment, and a number nobody produced
 is not a number this README will print.
+
+#### One fairness fix this run exposed
+
+Three of the eight responses were first scored zero for *format*: the model wrote
+`"final_value": {"value": "8.31", "unit": "%"}` — the same `{value, unit}` shape
+the rest of the payload uses — and wrote `%` instead of `percent`. Scoring that as
+a reasoning failure measures JSON compliance, not arithmetic. The parser now
+normalises units through `units.parse_unit` and unpacks a `{value, unit}` object
+in `final_value`. Re-scoring the *same cached responses* moved units 0.286 →
+0.381 and intermediate 0.091 → 0.182, with no new model calls.
+
+The leniency stops there, and is documented in `scoring.Prediction.from_dict`: a
+missing answer is missing, a wrong number is wrong, and nothing is inferred from
+prose. The remaining malformed response put an entire step object in
+`final_value`, which is a real failure and still scores zero.
 
 ## Limitations
 

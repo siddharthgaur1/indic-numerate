@@ -229,6 +229,42 @@ def test_prediction_from_dict_roundtrip():
     assert item_correct(score_item(GOLD, p))
 
 
+def test_prediction_normalises_real_world_unit_spellings():
+    """A model writing "%" or "Rs. crore" is not making an arithmetic error."""
+    p = Prediction.from_dict(
+        {
+            "item_id": "fixture-001",
+            "figures": {"f1": {"value": 1200, "unit": "Rs. crore"}, "f2": {"value": 1000, "unit": "cr"}},
+            "steps": {"s1": {"value": 200, "unit": "crore"}, "s2": {"value": 20, "unit": "%"}},
+            "periods": {"f1": "FY2023", "f2": "FY2022"},
+            "final_value": 20,
+            "final_unit": "%",
+        }
+    )
+    assert p.final_unit == "percent" and p.figures["f1"][1] == "crore"
+    assert item_correct(score_item(GOLD, p))
+
+
+def test_prediction_unpacks_a_value_unit_object_in_final_value():
+    """Models copy the {value, unit} shape used everywhere else in the payload."""
+    p = Prediction.from_dict(
+        {"item_id": "fixture-001", "final_value": {"value": "20", "unit": "%"}}
+    )
+    assert p.final_value == Decimal("20") and p.final_unit == "percent"
+
+
+def test_explicit_final_unit_wins_over_the_nested_one():
+    p = Prediction.from_dict(
+        {"item_id": "x", "final_value": {"value": 1, "unit": "%"}, "final_unit": "ratio"}
+    )
+    assert p.final_unit == "ratio"
+
+
+def test_unrecognisable_unit_is_kept_verbatim_so_errors_can_name_it():
+    p = Prediction.from_dict({"item_id": "x", "final_value": 1, "final_unit": "bananas"})
+    assert p.final_unit == "bananas"
+
+
 def test_prediction_from_dict_rejects_malformed_figure():
     with pytest.raises(ValueError, match="figures\\['f1'\\]"):
         Prediction.from_dict({"item_id": "x", "figures": {"f1": "1200 crore"}})
