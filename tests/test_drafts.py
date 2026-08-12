@@ -40,6 +40,54 @@ def test_drafts_are_not_in_the_benchmark_file():
         assert item.item_id not in promoted, f"{item.item_id} appears verbatim in items.jsonl"
 
 
+def test_every_promoted_item_has_a_promotion_record():
+    """Provenance chain: an item that came from a draft must be traceable to the
+    promotion that put it in the benchmark, and to whoever signed it."""
+    if not ITEMS.is_file():
+        return
+    log_path = ROOT / "data" / "promotions.jsonl"
+    assert log_path.is_file(), "items.jsonl exists but no promotions were recorded"
+    log = {json.loads(l)["item_id"]: json.loads(l) for l in log_path.read_text(encoding="utf-8").splitlines() if l.strip()}
+    draft_lineage = {promote_items.promoted_id(i.item_id) for i in drafts()}
+    for item in load_items(ITEMS):
+        if item.item_id in draft_lineage:
+            assert item.item_id in log, (
+                f"{item.item_id} came from a draft but has no entry in promotions.jsonl"
+            )
+            assert log[item.item_id]["reviewed_by"].strip(), f"{item.item_id}: empty reviewer"
+            assert log[item.item_id]["promoted_at"]
+
+
+def test_promotion_records_point_at_items_that_exist():
+    log_path = ROOT / "data" / "promotions.jsonl"
+    if not (log_path.is_file() and ITEMS.is_file()):
+        return
+    present = {i.item_id for i in load_items(ITEMS)}
+    for line in log_path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            row = json.loads(line)
+            assert row["item_id"] in present, (
+                f"promotions.jsonl claims {row['item_id']} was promoted, but it is not in items.jsonl"
+            )
+
+
+def test_unreviewed_promotions_are_not_dressed_up_as_reviewed():
+    """If a promotion was not a page-level human review, the record must say so
+    rather than carrying a name that implies one."""
+    log_path = ROOT / "data" / "promotions.jsonl"
+    if not log_path.is_file():
+        return
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for line in log_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        reviewer = json.loads(line)["reviewed_by"].lower()
+        if "not page-level human reviewed" in reviewer:
+            assert "have not been page-level human" in readme, (
+                "items were promoted without human review, so the README must say so"
+            )
+
+
 def test_every_draft_id_is_marked_as_a_draft():
     for item in drafts():
         assert "-d0" in item.item_id, f"{item.item_id} is not identifiable as a draft"
