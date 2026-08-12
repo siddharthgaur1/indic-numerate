@@ -26,7 +26,7 @@ REQUIRED_CAVEATS = [
     "Reasoning depth is capped at 4 steps",
     "one valid decomposition, not the only one",
     "Single annotator",
-    "Published reports change",
+    "a hash does not prove a document is usable",
     "Sector labels come from NSE's own industry column",
     "Restated figures follow the citing document",
     "Adapters are thin",

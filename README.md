@@ -10,8 +10,9 @@ what may be claimed. Apache-2.0.
 
 > **Status: corpus fetched, items are drafts only.** The schema, guidelines,
 > scorers, harness and validators are complete and tested, and the corpus is real:
-> 92 annual reports from 49 NIFTY 50 companies, each pinned by SHA-256
-> (`data/corpus.jsonl`), split train/test.
+> 91 annual reports from 49 NIFTY 50 companies, each pinned by SHA-256
+> (`data/corpus.jsonl`), every one confirmed to open with a text layer, split
+> train/test.
 >
 > **`data/items.jsonl` holds 10 items (6 train / 4 test), and they have NOT been
 > page-level human reviewed.** They were machine-drafted, auto-verified to appear
@@ -65,7 +66,7 @@ An item that cannot be scored on all four axes does not parse.
 <!-- BEGIN GENERATED COUNTS -->
 | | |
 |---|---|
-| documents | 92 |
+| documents | 91 |
 | items | 10 (6 train / 4 test) |
 | unit-trap items | 5 |
 | reasoning depth | 2-step: 6, 3-step: 1, 4-step: 3 |
@@ -154,9 +155,13 @@ These are load-bearing. They stay in this file; diluting one is a regression.
    self-agreement pass (docs/annotation-guidelines.md §8). There is no
    inter-annotator agreement figure and there will not be one until a second
    annotator exists.
-7. **Published reports change.** Companies silently replace PDFs. Every document is
-   pinned by SHA-256; `python scripts/fetch_reports.py --verify` tells you whether
-   your copy is the one the items were written against.
+7. **Published reports change, and a hash does not prove a document is usable.**
+   Every document is pinned by SHA-256, and `scripts/fetch_reports.py --verify`
+   tells you whether your copy is the one the items were written against. It does
+   not tell you the PDF opens: six documents in the first fetch were truncated
+   mid-download, hashed correctly, and verified clean while being unreadable.
+   `scripts/audit_corpus.py` opens every PDF and is the check that catches that;
+   `data/corpus_audit.json` records the result (91/91 open with a text layer).
 8. **Sector labels come from NSE's own industry column, with one hand-made
    split.** The index lumps banks, NBFCs and insurers into "Financial Services";
    that one is split by the maintainer against a symbol list in
@@ -223,7 +228,8 @@ docs/
   submission.md
 scripts/
   build_sources.py      source list from a published index constituent frame
-  fetch_reports.py      fetch real PDFs, record provenance
+  fetch_reports.py      fetch real PDFs, record provenance, reject short reads
+  audit_corpus.py       open every PDF; a correct hash is not a usable document
   build_splits.py       stratified seeded splits
   write_items.py        authoring CLI (maintainer only)
   oracle_ceiling.py     circularity check; must pass before publishing
@@ -242,6 +248,7 @@ pytest                                   # 260+ tests, no network, no API keys
 python scripts/build_sources.py          # source list from the NIFTY 50 frame
 python scripts/fetch_reports.py          # ~1.9 GB of real PDFs, hashed as fetched
 python scripts/fetch_reports.py --verify # confirm your copies match the corpus index
+python scripts/audit_corpus.py           # confirm they actually open (a hash will not)
 python scripts/build_splits.py
 
 python scripts/draft_items.py            # candidate items -> data/items_draft.jsonl

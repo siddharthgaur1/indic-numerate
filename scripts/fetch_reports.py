@@ -69,13 +69,30 @@ def fetch_one(row: dict, timeout: int) -> Document:
     import requests  # imported late so --verify works without the network stack
 
     url = row["source_url"].strip()
-    resp = requests.get(url, timeout=timeout, headers=HEADERS)
+    resp = requests.get(url, timeout=timeout, headers=HEADERS, stream=True)
     resp.raise_for_status()
-    body = resp.content
+    body = b"".join(resp.iter_content(chunk_size=1 << 16))
+
+    # A truncated download hashes perfectly well: the hash records whatever
+    # arrived. Six documents in the first run of this fetcher were cut at an
+    # exact 32 KiB boundary, stored, hashed, and only found to be unreadable
+    # much later. So completeness is checked here, at the only point where the
+    # information exists, and a short read is a failure rather than a document.
+    declared = resp.headers.get("content-length")
+    if declared is not None and int(declared) != len(body):
+        raise ValueError(
+            f"{row['doc_id']}: truncated download -- server declared {int(declared)} bytes, "
+            f"received {len(body)}. Not stored; nothing was substituted for it."
+        )
     if not body.startswith(b"%PDF"):
         raise ValueError(
             f"{row['doc_id']}: {url} returned {len(body)} bytes that are not a PDF "
             f"(starts with {body[:16]!r}); the publisher may be serving an interstitial page"
+        )
+    if b"%%EOF" not in body[-2048:]:
+        raise ValueError(
+            f"{row['doc_id']}: PDF has no %%EOF trailer in its last 2 KB ({len(body)} bytes "
+            "received), so the file is incomplete. Not stored."
         )
     PDF_DIR.mkdir(parents=True, exist_ok=True)
     local = PDF_DIR / f"{row['doc_id']}.pdf"

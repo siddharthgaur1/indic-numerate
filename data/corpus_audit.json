@@ -1,0 +1,737 @@
+{
+  "n_documents": 91,
+  "n_openable": 91,
+  "n_unopenable": 0,
+  "n_without_text_layer": 0,
+  "unusable_doc_ids": [],
+  "documents": [
+    {
+      "doc_id": "jswsteel-fy2025",
+      "opens": true,
+      "n_pages": 384,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "maruti-fy2025",
+      "opens": true,
+      "n_pages": 254,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bhartiartl-fy2024",
+      "opens": true,
+      "n_pages": 261,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bajfinance-fy2024",
+      "opens": true,
+      "n_pages": 464,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "jiofin-fy2024",
+      "opens": true,
+      "n_pages": 249,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "kotakbank-fy2024",
+      "opens": true,
+      "n_pages": 450,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "coalindia-fy2024",
+      "opens": true,
+      "n_pages": 262,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "infy-fy2025",
+      "opens": true,
+      "n_pages": 370,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "infy-fy2024",
+      "opens": true,
+      "n_pages": 353,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "ongc-fy2025",
+      "opens": true,
+      "n_pages": 709,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "maxhealth-fy2024",
+      "opens": true,
+      "n_pages": 247,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "tataconsum-fy2025",
+      "opens": true,
+      "n_pages": 467,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "sbilife-fy2025",
+      "opens": true,
+      "n_pages": 265,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "apollohosp-fy2024",
+      "opens": true,
+      "n_pages": 525,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "sbilife-fy2024",
+      "opens": true,
+      "n_pages": 475,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "ntpc-fy2024",
+      "opens": true,
+      "n_pages": 354,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "eichermot-fy2024",
+      "opens": true,
+      "n_pages": 483,
+      "sampled": 8,
+      "pages_with_text": 7,
+      "error": null
+    },
+    {
+      "doc_id": "icicibank-fy2024",
+      "opens": true,
+      "n_pages": 463,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "cipla-fy2024",
+      "opens": true,
+      "n_pages": 460,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "wipro-fy2024",
+      "opens": true,
+      "n_pages": 502,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "eichermot-fy2025",
+      "opens": true,
+      "n_pages": 524,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "ongc-fy2024",
+      "opens": true,
+      "n_pages": 728,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "grasim-fy2024",
+      "opens": true,
+      "n_pages": 591,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "adanient-fy2024",
+      "opens": true,
+      "n_pages": 598,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "sbin-fy2025",
+      "opens": true,
+      "n_pages": 518,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "itc-fy2024",
+      "opens": true,
+      "n_pages": 456,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "maruti-fy2024",
+      "opens": true,
+      "n_pages": 252,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "kotakbank-fy2025",
+      "opens": true,
+      "n_pages": 522,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hindalco-fy2025",
+      "opens": true,
+      "n_pages": 413,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "ultracemco-fy2025",
+      "opens": true,
+      "n_pages": 293,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bajfinance-fy2025",
+      "opens": true,
+      "n_pages": 503,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "trent-fy2025",
+      "opens": true,
+      "n_pages": 237,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "lt-fy2024",
+      "opens": true,
+      "n_pages": 669,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hdfclife-fy2024",
+      "opens": true,
+      "n_pages": 639,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "tatasteel-fy2025",
+      "opens": true,
+      "n_pages": 554,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hindalco-fy2024",
+      "opens": true,
+      "n_pages": 402,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "tmpv-fy2025",
+      "opens": true,
+      "n_pages": 591,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "sunpharma-fy2024",
+      "opens": true,
+      "n_pages": 313,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bajajfinsv-fy2024",
+      "opens": true,
+      "n_pages": 392,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "titan-fy2024",
+      "opens": true,
+      "n_pages": 451,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "jiofin-fy2025",
+      "opens": true,
+      "n_pages": 139,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "drreddy-fy2024",
+      "opens": true,
+      "n_pages": 236,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "itc-fy2025",
+      "opens": true,
+      "n_pages": 428,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hcltech-fy2025",
+      "opens": true,
+      "n_pages": 470,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "icicibank-fy2025",
+      "opens": true,
+      "n_pages": 459,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "tmpv-fy2024",
+      "opens": true,
+      "n_pages": 531,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "lt-fy2025",
+      "opens": true,
+      "n_pages": 739,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "techm-fy2024",
+      "opens": true,
+      "n_pages": 495,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "sbin-fy2024",
+      "opens": true,
+      "n_pages": 486,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hdfcbank-fy2024",
+      "opens": true,
+      "n_pages": 610,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "sunpharma-fy2025",
+      "opens": true,
+      "n_pages": 327,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "grasim-fy2025",
+      "opens": true,
+      "n_pages": 628,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "coalindia-fy2025",
+      "opens": true,
+      "n_pages": 371,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "powergrid-fy2024",
+      "opens": true,
+      "n_pages": 317,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "tcs-fy2025",
+      "opens": true,
+      "n_pages": 337,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "jswsteel-fy2024",
+      "opens": true,
+      "n_pages": 348,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "ultracemco-fy2024",
+      "opens": true,
+      "n_pages": 270,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hdfcbank-fy2025",
+      "opens": true,
+      "n_pages": 591,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "shriramfin-fy2024",
+      "opens": true,
+      "n_pages": 512,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bajajfinsv-fy2025",
+      "opens": true,
+      "n_pages": 423,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "nestleind-fy2025",
+      "opens": true,
+      "n_pages": 313,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "techm-fy2025",
+      "opens": true,
+      "n_pages": 718,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "axisbank-fy2025",
+      "opens": true,
+      "n_pages": 554,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "indigo-fy2024",
+      "opens": true,
+      "n_pages": 315,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "asianpaint-fy2024",
+      "opens": true,
+      "n_pages": 272,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "axisbank-fy2024",
+      "opens": true,
+      "n_pages": 517,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "eternal-fy2024",
+      "opens": true,
+      "n_pages": 397,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "ntpc-fy2025",
+      "opens": true,
+      "n_pages": 374,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bel-fy2025",
+      "opens": true,
+      "n_pages": 236,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "tatasteel-fy2024",
+      "opens": true,
+      "n_pages": 582,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hcltech-fy2024",
+      "opens": true,
+      "n_pages": 385,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bhartiartl-fy2025",
+      "opens": true,
+      "n_pages": 288,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "adanient-fy2025",
+      "opens": true,
+      "n_pages": 610,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bel-fy2024",
+      "opens": true,
+      "n_pages": 208,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "adaniports-fy2025",
+      "opens": true,
+      "n_pages": 675,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "bajaj-auto-fy2024",
+      "opens": true,
+      "n_pages": 340,
+      "sampled": 8,
+      "pages_with_text": 7,
+      "error": null
+    },
+    {
+      "doc_id": "hdfclife-fy2025",
+      "opens": true,
+      "n_pages": 704,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "nestleind-fy2024",
+      "opens": true,
+      "n_pages": 274,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "asianpaint-fy2025",
+      "opens": true,
+      "n_pages": 283,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "eternal-fy2025",
+      "opens": true,
+      "n_pages": 401,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "apollohosp-fy2025",
+      "opens": true,
+      "n_pages": 296,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "reliance-fy2025",
+      "opens": true,
+      "n_pages": 174,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "hindunilvr-fy2025",
+      "opens": true,
+      "n_pages": 236,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "reliance-fy2024",
+      "opens": true,
+      "n_pages": 181,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "shriramfin-fy2025",
+      "opens": true,
+      "n_pages": 560,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "indigo-fy2025",
+      "opens": true,
+      "n_pages": 322,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "maxhealth-fy2025",
+      "opens": true,
+      "n_pages": 255,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "wipro-fy2025",
+      "opens": true,
+      "n_pages": 535,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "titan-fy2025",
+      "opens": true,
+      "n_pages": 456,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "powergrid-fy2025",
+      "opens": true,
+      "n_pages": 364,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    },
+    {
+      "doc_id": "drreddy-fy2025",
+      "opens": true,
+      "n_pages": 256,
+      "sampled": 8,
+      "pages_with_text": 8,
+      "error": null
+    }
+  ]
+}

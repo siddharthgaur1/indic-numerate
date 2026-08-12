@@ -10,12 +10,14 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from pathlib import Path
 
 import pytest
 
 from indic_numerate.corpus import Document
 from indic_numerate.splits import assign_splits, stratum_counts, stratum_of
 
+ROOT = Path(__file__).resolve().parents[1]
 SECTORS = ["banking", "it_services", "pharma", "auto", "energy"]
 YEARS = ["FY2021", "FY2022", "FY2023"]
 
@@ -165,3 +167,54 @@ def test_authored_documents_drop_out_without_disturbing_the_order(tmp_path):
     write_items.existing_counts = lambda: Counter({d: 1 for d in done})
     resumed = write_items.draw("train", per_doc=1)
     assert [d.doc_id for d in resumed] == [d.doc_id for d in pool if d.doc_id not in done]
+
+
+# --- items must agree with their document ---------------------------------
+
+
+def test_item_splits_match_their_documents():
+    """The document-level split is authoritative. If a corpus change moves a
+    document between splits, an item still claiming the old split would leak a
+    training document into the test set -- silently, and only in one direction.
+    """
+    import json
+
+    items_path = ROOT / "data" / "items.jsonl"
+    splits_dir = ROOT / "data" / "splits"
+    if not (items_path.is_file() and (splits_dir / "train_ids.json").is_file()):
+        pytest.skip("no items or splits yet")
+
+    train = set(json.loads((splits_dir / "train_ids.json").read_text(encoding="utf-8")))
+    test = set(json.loads((splits_dir / "test_ids.json").read_text(encoding="utf-8")))
+    mismatches = []
+    for line in items_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        item = json.loads(line)
+        doc_split = "train" if item["doc_id"] in train else "test" if item["doc_id"] in test else None
+        if doc_split is None:
+            mismatches.append(f"{item['item_id']}: document {item['doc_id']} is in no split")
+        elif doc_split != item["split"]:
+            mismatches.append(
+                f"{item['item_id']}: item says {item['split']}, document {item['doc_id']} is {doc_split}"
+            )
+    assert not mismatches, chr(10).join(mismatches)
+
+
+def test_every_item_document_is_in_the_corpus_and_readable():
+    """An item anchored on a document that does not open cannot be checked by
+    anyone reproducing the benchmark."""
+    import json
+
+    items_path = ROOT / "data" / "items.jsonl"
+    audit_path = ROOT / "data" / "corpus_audit.json"
+    if not (items_path.is_file() and audit_path.is_file()):
+        pytest.skip("no items or audit yet")
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    unusable = set(audit["unusable_doc_ids"])
+    openable = {d["doc_id"] for d in audit["documents"] if d["opens"]}
+    for line in items_path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            item = json.loads(line)
+            assert item["doc_id"] in openable, f"{item['item_id']}: {item['doc_id']} does not open"
+            assert item["doc_id"] not in unusable, f"{item['item_id']}: {item['doc_id']} is unusable"

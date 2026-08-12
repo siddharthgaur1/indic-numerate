@@ -65,12 +65,51 @@ problem. The fetcher therefore sends a browser UA and identifies itself through
 `From` and `X-Contact` headers instead, with a pause between downloads. See the
 comment at `scripts/fetch_reports.py:HEADERS`.
 
+## A correct hash is not a usable document
+
+The first run of the fetcher stored six documents that hash perfectly against
+`data/corpus.jsonl` and cannot be opened at all: `PdfminerException: Unexpected
+EOF`. `scripts/fetch_reports.py --verify` reported 0 problems for all 92, because
+the hash records whatever arrived — including a truncated download.
+
+Their stored sizes gave it away. Every one was an exact multiple of 32 KiB:
+
+| document | stored (bytes) | / 32 KiB | actual size on refetch |
+|---|---|---|---|
+| drreddy-fy2025   | 2,916,352  | 89   | 17.4 MB |
+| titan-fy2025     | 3,145,728  | 96   | 19.8 MB |
+| powergrid-fy2025 | 55,115,776 | 1682 | 93.5 MB |
+| wipro-fy2025     | 2,293,760  | 70   | 7.9 MB |
+| cipla-fy2025     | 2,785,280  | 85   | (still truncates) |
+| maxhealth-fy2025 | 3,407,872  | 104  | 24.8 MB |
+
+A stream cut at a buffer boundary, not a publisher serving short files. The
+fetcher read `resp.content` and never checked that what it received was what was
+promised, so a partial download became a document with a valid-looking provenance
+record. PowerGrid lost 40% of its bytes and still verified.
+
+**Fix:** the fetcher now compares the received length against `Content-Length` and
+requires a `%%EOF` trailer in the last 2 KB, and a short read is a failure rather
+than a document. `scripts/audit_corpus.py` re-checks the whole corpus by actually
+opening every PDF, because that is the only check that would have caught this.
+
+`cipla-fy2025` truncates reproducibly at the same byte on refetch, so it is
+absent from the corpus rather than stored broken — which is what the no-fallback
+rule is for.
+
+The general lesson, and the reason this file exists: **a provenance check tells
+you the bytes did not change, not that they were ever right.** Both checks are
+needed, and only one of them was there.
+
 ## Corpus as fetched
 
-92 documents, 49 companies, 12 sectors, FY2024–FY2025, ~1.9 GB of PDF. Every one
+91 documents, 49 companies, 12 sectors, FY2024–FY2025, ~2.1 GB of PDF. Every one
 carries its source URL, fetch date and SHA-256 in `data/corpus.jsonl`;
 `python scripts/fetch_reports.py --verify` re-hashes local copies against it and
-reports 0 problems as of the fetch.
+reports 0 problems, and `python scripts/audit_corpus.py` confirms all 91 open with
+a text layer (`data/corpus_audit.json`). Two of the 93 listed reports are absent:
+`bajaj-auto-fy2025` (404 at the URL NSE's own archive gives) and `cipla-fy2025`
+(truncates reproducibly).
 
 The PDFs themselves are not committed — they are the publishers', and the hashes
 are what makes the corpus reproducible.

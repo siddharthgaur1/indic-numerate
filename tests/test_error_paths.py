@@ -10,12 +10,15 @@ from __future__ import annotations
 
 import json
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from fixtures import VALID, item
 from indic_numerate.corpus import CorpusError, Document, load_corpus, sha256_file, verify
 from indic_numerate.schema import Item
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
 
 DOC = {
     "doc_id": "example-fy2023",
@@ -190,3 +193,79 @@ def test_oracle_numbers_parses_indian_comma_grouping():
     import oracle_ceiling
 
     assert Decimal("1200") in oracle_ceiling.numbers_in("revenue of 1,200 crore")
+
+
+# --- the fetcher's completeness checks -------------------------------------
+#
+# These exist because six documents were stored truncated, hashed correctly, and
+# passed --verify while being unopenable. See docs/corpus-findings.md.
+
+
+class FakeResponse:
+    def __init__(self, body: bytes, declared: int | None = None):
+        self.body = body
+        self.headers = {} if declared is None else {"content-length": str(declared)}
+
+    def raise_for_status(self):
+        return None
+
+    def iter_content(self, chunk_size=1):
+        yield self.body
+
+
+def fetch_with(monkeypatch, tmp_path, body: bytes, declared: int | None):
+    import fetch_reports
+
+    monkeypatch.setattr(fetch_reports, "PDF_DIR", tmp_path)
+    monkeypatch.setattr(fetch_reports, "ROOT", tmp_path)
+    import requests
+
+    monkeypatch.setattr(requests, "get", lambda *a, **k: FakeResponse(body, declared))
+    row = {"doc_id": "example-fy2025", "company": "Example Ltd", "sector": "pharma",
+           "fiscal_year": "FY2025", "source_url": "https://example.invalid/ar.pdf"}
+    return fetch_reports.fetch_one(row, timeout=5)
+
+
+GOOD_PDF = b"%PDF-1.7" + bytes([10]) + b"x" * 500 + bytes([10]) + b"%%EOF" + bytes([10])
+
+
+def test_complete_pdf_is_stored(monkeypatch, tmp_path):
+    doc = fetch_with(monkeypatch, tmp_path, GOOD_PDF, len(GOOD_PDF))
+    assert doc.n_bytes == len(GOOD_PDF)
+    assert (tmp_path / "example-fy2025.pdf").is_file()
+
+
+def test_short_read_is_refused_and_names_both_sizes(monkeypatch, tmp_path):
+    with pytest.raises(ValueError, match="truncated download"):
+        fetch_with(monkeypatch, tmp_path, GOOD_PDF, len(GOOD_PDF) + 4096)
+    assert not (tmp_path / "example-fy2025.pdf").exists(), "a truncated download must not be stored"
+
+
+def test_pdf_without_eof_trailer_is_refused(monkeypatch, tmp_path):
+    truncated = b"%PDF-1.7" + bytes([10]) + b"x" * 4096
+    with pytest.raises(ValueError, match="no %%EOF trailer"):
+        fetch_with(monkeypatch, tmp_path, truncated, len(truncated))
+
+
+def test_non_pdf_body_is_refused(monkeypatch, tmp_path):
+    with pytest.raises(ValueError, match="not a PDF"):
+        fetch_with(monkeypatch, tmp_path, b"<html>blocked</html>", 20)
+
+
+def test_missing_content_length_still_checks_the_trailer(monkeypatch, tmp_path):
+    """Some servers omit the header; the structural check must still apply."""
+    with pytest.raises(ValueError, match="no %%EOF trailer"):
+        fetch_with(monkeypatch, tmp_path, b"%PDF-1.7" + bytes([10]) + b"x" * 4096, None)
+    doc = fetch_with(monkeypatch, tmp_path, GOOD_PDF, None)
+    assert doc.n_bytes == len(GOOD_PDF)
+
+
+def test_corpus_audit_records_every_document():
+    """The audit is what catches a hash-clean but unreadable file."""
+    audit_path = ROOT_DIR / "data" / "corpus_audit.json"
+    if not audit_path.is_file():
+        pytest.skip("no audit yet")
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    assert audit["n_documents"] == len(audit["documents"])
+    assert audit["n_unopenable"] == 0, f"unopenable documents in the corpus: {audit['unusable_doc_ids']}"
+    assert audit["n_without_text_layer"] == 0
