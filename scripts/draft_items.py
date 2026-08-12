@@ -468,6 +468,115 @@ def build() -> list[dict]:
         reasoning_depth=2, unit_trap=True, sector="energy", fiscal_year="FY2025", split="test",
     ))
 
+    # -------------------------------------------------------- jsw steel (test)
+    # jswsteel-fy2025.pdf p278, Consolidated Statement of Profit and Loss, Rs crores.
+    # Revenue fell, so the answer is negative: sign handling is part of the test.
+    jr25, jr24 = D("168824"), D("175006")
+    jdiff = jr25 - jr24
+    items.append(dict(
+        item_id="jswsteel-fy2025-d01",
+        question=("In JSW Steel's consolidated statement of profit and loss for the year ended "
+                  "31 March 2025, by what percentage did revenue from operations change against "
+                  "the comparative year?"),
+        doc_id="jswsteel-fy2025",
+        figures=[
+            fig("f1", "Revenue from operations, year ended 31 March 2025", jr25, "crore", 278,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Revenue from operations, year ended 31 March 2024 (comparative)", jr24,
+                "crore", 278, "Consolidated Statement of Profit and Loss", "FY2024"),
+        ],
+        steps=[
+            step("s1", "Change in revenue from operations", "subtract", ["f1", "f2"], jdiff, "crore"),
+            step("s2", "Change as a percentage of the comparative year", "percent_change", ["s1", "f2"],
+                 q(jdiff / jr24 * 100), "percent"),
+        ],
+        final_value=str(q(jdiff / jr24 * 100)), final_unit="percent",
+        tolerance={"mode": "absolute", "value": "0.05"},
+        reasoning_depth=2, unit_trap=False, sector="metals", fiscal_year="FY2025", split="test",
+    ))
+
+    jti, jexp = D("169518"), D("163641")
+    jop = jti - jexp
+    items.append(dict(
+        item_id="jswsteel-fy2025-d02",
+        question=("From JSW Steel's consolidated statement of profit and loss for the year ended "
+                  "31 March 2025, what was the excess of total income over total expenses, expressed "
+                  "as a percentage of total income?"),
+        doc_id="jswsteel-fy2025",
+        figures=[
+            fig("f1", "Total income (I + II), year ended 31 March 2025", jti, "crore", 278,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Total expenses, year ended 31 March 2025", jexp, "crore", 278,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+        ],
+        steps=[
+            step("s1", "Total income less total expenses", "subtract", ["f1", "f2"], jop, "crore"),
+            step("s2", "That excess as a share of total income", "divide", ["s1", "f1"],
+                 q(jop / jti, "0.000001"), "ratio"),
+            step("s3", "Share expressed as a percentage", "convert", ["s2"], q(jop / jti * 100), "percent"),
+        ],
+        final_value=str(q(jop / jti * 100)), final_unit="percent",
+        tolerance={"mode": "absolute", "value": "0.02"},
+        reasoning_depth=3, unit_trap=True, sector="metals", fiscal_year="FY2025", split="test",
+    ))
+
+    # ------------------------------------------------------------- ongc (test)
+    # ongc-fy2025.pdf p447, Consolidated Statement of Profit and Loss, "(` in Million)".
+    # The comparative column is headed "March 31, 2024*" and the footnote on the
+    # facing page reads "*Restated, refer Note No. 1 and 83." Per
+    # docs/annotation-guidelines.md section 4 the item uses the figure as this
+    # document prints it and records the restatement.
+    RESTATE_NOTE = ("FY2024 comparatives restated in the FY2025 report; the statement's own "
+                    "footnote reads '*Restated, refer Note No. 1 and 83.'")
+    or25, or24 = D("6632623.09"), D("6531707.67")
+    odiff = or25 - or24
+    items.append(dict(
+        item_id="ongc-fy2025-d01",
+        question=("In ONGC's consolidated statement of profit and loss for the year ended "
+                  "31 March 2025, by what percentage did revenue from operations change against "
+                  "the comparative figure printed for the previous year?"),
+        doc_id="ongc-fy2025",
+        figures=[
+            fig("f1", "Revenue from operations, year ended 31 March 2025", or25, "million", 447,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Revenue from operations, year ended 31 March 2024 (restated comparative)",
+                or24, "million", 447, "Consolidated Statement of Profit and Loss", "FY2024",
+                restated=True, note=RESTATE_NOTE),
+        ],
+        steps=[
+            step("s1", "Change in revenue from operations", "subtract", ["f1", "f2"], q(odiff, "0.01"), "million"),
+            step("s2", "Change as a percentage of the comparative year", "percent_change", ["s1", "f2"],
+                 q(odiff / or24 * 100), "percent"),
+        ],
+        final_value=str(q(odiff / or24 * 100)), final_unit="percent",
+        tolerance={"mode": "absolute", "value": "0.05"},
+        reasoning_depth=2, unit_trap=False, sector="energy", fiscal_year="FY2025", split="test",
+    ))
+
+    oti = D("6756558.83")
+    oother = oti - or25
+    items.append(dict(
+        item_id="ongc-fy2025-d02",
+        question=("ONGC's consolidated statement of profit and loss for the year ended 31 March 2025 "
+                  "reports revenue from operations and total income. What was other income for that "
+                  "year, in Rs crore?"),
+        doc_id="ongc-fy2025",
+        figures=[
+            fig("f1", "Total income (I+II), year ended 31 March 2025", oti, "million", 447,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Revenue from operations, year ended 31 March 2025", or25, "million", 447,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+        ],
+        steps=[
+            step("s1", "Total income less revenue from operations", "subtract", ["f1", "f2"],
+                 q(oother, "0.01"), "million"),
+            step("s2", "Converted from million to crore", "convert", ["s1"], q(oother / 10, "0.001"), "crore"),
+        ],
+        final_value=str(q(oother / 10, "0.001")), final_unit="crore",
+        tolerance={"mode": "relative", "value": "0.005"},
+        reasoning_depth=2, unit_trap=True, sector="energy", fiscal_year="FY2025", split="test",
+    ))
+
     return items
 
 
@@ -501,6 +610,22 @@ def main() -> int:
     args = ap.parse_args()
 
     raw = build()
+    # The split is never hand-written on an item: it is looked up from
+    # data/splits/, which is authoritative. A hardcoded split silently rots the
+    # moment the corpus or the splitting rule changes -- and it did, when splits
+    # moved from per-document to per-company.
+    split_of = {}
+    for name in ("train", "test"):
+        path = ROOT / "data" / "splits" / f"{name}_ids.json"
+        if path.is_file():
+            for doc_id in json.loads(path.read_text(encoding="utf-8")):
+                split_of[doc_id] = name
+    if not split_of:
+        raise SystemExit("data/splits/ is empty; run scripts/build_splits.py first")
+    for r in raw:
+        if r["doc_id"] not in split_of:
+            raise SystemExit(f"{r['item_id']}: document {r['doc_id']} is in no split")
+        r["split"] = split_of[r["doc_id"]]
     items = [Item.model_validate(r) for r in raw]  # the schema is the first reviewer
     print(f"{len(items)} draft item(s) validated against the schema")
     for i in items:

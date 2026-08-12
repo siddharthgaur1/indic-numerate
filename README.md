@@ -70,9 +70,9 @@ An item that cannot be scored on all four axes does not parse.
 | | |
 |---|---|
 | documents | 91 |
-| items | 15 (11 train / 4 test) |
-| unit-trap items | 7 |
-| reasoning depth | 2-step: 11, 3-step: 1, 4-step: 3 |
+| items | 19 (11 train / 8 test) |
+| unit-trap items | 9 |
+| reasoning depth | 2-step: 14, 3-step: 2, 4-step: 3 |
 | sectors / fiscal years | 12 / 2 |
 | seed | 20240917 |
 <!-- END GENERATED COUNTS -->
@@ -99,9 +99,9 @@ chance**, and the gate failed. Splits are now assigned per company
 ([the write-up](docs/bugs-that-looked-like-results.md#5-a-document-level-split-that-leaked-the-answers)).
 The tolerance was deliberately *not* tightened to make the hit disappear.
 
-With 11 train and 4 test items, the current pass says very little: a clean oracle
-result over four items is what four non-leaking items look like, not evidence that
-a hundred will be clean. **The number to quote is the one from the full item set,
+With 11 train and 8 test items, the current pass says very little: a clean oracle
+result over eight items is what eight non-leaking items look like, not evidence
+that a hundred will be clean. **The number to quote is the one from the full item set,
 and it does not exist yet.** Reproduce with:
 
 ```bash
@@ -201,10 +201,11 @@ These are load-bearing. They stay in this file; diluting one is a regression.
 14. **Where a company filed a revised annual report, only the latest submission is
     in the corpus.** The superseded filing is dropped, not recorded as a second
     document.
-15. **The test split is four items from two companies.** Splitting by company is
-    correct, but with 49 companies and items authored from only eight documents so
-    far, the test half is tiny and dominated by whichever companies happened to
-    land there. No per-sector or per-depth number from it means anything yet.
+15. **The test split is eight items from four companies.** Splitting by company
+    is correct, but with 49 companies in the corpus and items authored from only
+    twelve documents so far, the test half is small and dominated by whichever
+    companies happened to land there. No per-sector or per-depth number from it
+    means anything yet, and the unit-trap subset is smaller still.
 16. **How much document a model sees changes what `retrieval` means.** The runner
     has three context modes (`none`, `anchored`, `distractors`) and scores across
     them are not comparable. `anchored` hands the model the exact pages the gold

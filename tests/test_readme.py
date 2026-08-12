@@ -35,7 +35,7 @@ REQUIRED_CAVEATS = [
     "Fiscal years are limited to FY2024",
     "only the latest submission is",
     "changes what `retrieval` means",
-    "The test split is four items from two companies",
+    "The test split is eight items from four companies",
     "splits are assigned per **company**",
     "machine-drafted and have not been page-level human",
 ]
