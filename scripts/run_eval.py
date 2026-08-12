@@ -77,6 +77,8 @@ def main() -> int:
     ap.add_argument("--cache-dir", default=str(ROOT / ".cache"))
     ap.add_argument("--context", default="distractors", choices=["none", "anchored", "distractors"],
                     help="how much document the model sees; scores across modes are not comparable")
+    ap.add_argument("--distractors", type=int, default=4,
+                    help="distractor pages added in --context distractors; part of the run label")
     ap.add_argument("--provisional", action="store_true",
                     help="write to results/provisional/ and leave the leaderboard alone "
                          "(for runs over unreviewed draft items)")
@@ -97,8 +99,10 @@ def main() -> int:
         model = args.model or json.loads(Path(args.submission).read_text(encoding="utf-8"))["model"]
     else:
         adapter = adapters.build(args.adapter)
-        preds = run(items, adapter, args.cache_dir, context_mode=args.context)
-        model = f"{adapter.name} [ctx={args.context}]"
+        preds = run(items, adapter, args.cache_dir, context_mode=args.context,
+                    n_distractors=args.distractors)
+        label = args.context + (f"+{args.distractors}" if args.context == "distractors" else "")
+        model = f"{adapter.name} [ctx={label}]"
 
     report = build_report(model, items, preds)
     out_dir = RESULTS / "provisional" if args.provisional else RESULTS

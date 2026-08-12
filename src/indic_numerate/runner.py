@@ -154,10 +154,11 @@ def extract_json(text: str) -> dict:
 
 
 def predict(item: Item, adapter: Adapter, cache: Cache | None = None,
-            context_mode: str = "distractors", pdf_dir: str | Path = "data/pdfs") -> tuple[Prediction, str]:
+            context_mode: str = "distractors", pdf_dir: str | Path = "data/pdfs",
+            n_distractors: int = 4) -> tuple[Prediction, str]:
     """Returns (prediction, note). An unparseable response yields an empty
     prediction, which scores zero on every axis -- the honest outcome."""
-    prompt = build_prompt(item, build_context(item, context_mode, pdf_dir))
+    prompt = build_prompt(item, build_context(item, context_mode, pdf_dir, n_distractors))
     key = cache_key(item, adapter, prompt)
     response = cache.get(key) if cache else None
     note = "cached" if response is not None else "called"
@@ -179,11 +180,12 @@ def predict(item: Item, adapter: Adapter, cache: Cache | None = None,
 
 
 def run(items: list[Item], adapter: Adapter, cache_dir: str | Path | None = ".cache",
-        context_mode: str = "distractors", pdf_dir: str | Path = "data/pdfs") -> dict[str, Prediction]:
+        context_mode: str = "distractors", pdf_dir: str | Path = "data/pdfs",
+        n_distractors: int = 4) -> dict[str, Prediction]:
     cache = Cache(cache_dir) if cache_dir else None
     out: dict[str, Prediction] = {}
     for i, item in enumerate(items, 1):
-        pred, note = predict(item, adapter, cache, context_mode, pdf_dir)
+        pred, note = predict(item, adapter, cache, context_mode, pdf_dir, n_distractors)
         out[item.item_id] = pred
         print(f"[{i}/{len(items)}] {item.item_id} {note}")
     return out

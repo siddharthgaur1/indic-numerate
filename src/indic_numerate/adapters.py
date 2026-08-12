@@ -65,10 +65,15 @@ class OpenAIAdapter:
 class OllamaAdapter:
     """Local models. Uses urllib so no SDK is required at all."""
 
-    def __init__(self, model: str = "llama3.2", host: str = "http://localhost:11434"):
+    def __init__(self, model: str = "llama3.2", host: str = "http://localhost:11434",
+                 timeout: int = 900):
         self.name = f"ollama/{model}"
         self.version = model
         self.host = host.rstrip("/")
+        # A document-context prompt is tens of thousands of tokens; a local model
+        # on CPU can take many minutes on one item. The old fixed 300s ceiling
+        # timed out mid-run and looked like an unreachable server.
+        self.timeout = timeout
 
     def generate(self, prompt: str) -> str:
         body = json.dumps({"model": self.version, "prompt": prompt, "stream": False}).encode()
@@ -76,7 +81,7 @@ class OllamaAdapter:
             f"{self.host}/api/generate", data=body, headers={"Content-Type": "application/json"}
         )
         try:
-            with urllib.request.urlopen(req, timeout=300) as resp:
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 return json.loads(resp.read())["response"]
         except OSError as exc:
             raise RuntimeError(
