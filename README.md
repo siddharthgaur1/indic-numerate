@@ -13,14 +13,13 @@ what may be claimed. Apache-2.0.
 > 92 annual reports from 49 NIFTY 50 companies, each pinned by SHA-256
 > (`data/corpus.jsonl`), split train/test.
 >
-> **`data/items.jsonl` — the benchmark itself — is still empty.** What exists is
-> `data/items_draft.jsonl`: 10 machine-drafted candidate items whose every figure
-> has been checked to appear on the page it cites, and whose every chain has been
-> recomputed in Decimal. That is not the same as reviewed. A person still has to
-> confirm each figure is the row the question is about, via
-> `scripts/promote_items.py`, which refuses to run without a named reviewer.
-> Until then there are no benchmark items, the leaderboard is empty, and the one
-> baseline that has been run is filed under `results/provisional/`.
+> **`data/items.jsonl` holds 10 items (6 train / 4 test), and they have NOT been
+> page-level human reviewed.** They were machine-drafted, auto-verified to appear
+> on the pages they cite (26/26 figures), arithmetically recomputed in Decimal by
+> test, and then promoted on the maintainer's instruction. `data/promotions.jsonl`
+> records that explicitly: no reviewer has confirmed that each figure is the row
+> its question means. Until someone does, treat these as provisional gold — and
+> the leaderboard stays empty.
 
 ---
 
@@ -67,9 +66,9 @@ An item that cannot be scored on all four axes does not parse.
 | | |
 |---|---|
 | documents | 92 |
-| items | 0 (0 train / 0 test) |
-| unit-trap items | 0 |
-| reasoning depth | none yet |
+| items | 10 (6 train / 4 test) |
+| unit-trap items | 5 |
+| reasoning depth | 2-step: 6, 3-step: 1, 4-step: 3 |
 | sectors / fiscal years | 12 / 2 |
 | seed | 20240917 |
 <!-- END GENERATED COUNTS -->
@@ -79,8 +78,8 @@ this table disagrees with `data/`, so the README cannot quietly go stale.
 
 ## Oracle ceiling
 
-**Run on the 10 draft items: all three attacks score 0.000 against a chance
-baseline of 0.069, so nothing beats chance. This number is not yet meaningful.**
+**Run on the 10 items: all three attacks score 0.000 against a chance baseline of
+0.069, so nothing beats chance. This number is not yet meaningful.**
 
 ```
 permutation baseline (chance) : 0.069
@@ -96,7 +95,7 @@ hundred items will not. **The number to quote is the one from the full item set,
 and it does not exist yet.** Reproduce with:
 
 ```bash
-python scripts/oracle_ceiling.py --items data/items_draft.jsonl
+python scripts/oracle_ceiling.py
 ```
 
 The gate itself is real: `scripts/oracle_ceiling.py` attempts to score the test
@@ -193,10 +192,14 @@ These are load-bearing. They stay in this file; diluting one is a regression.
     them are not comparable. `anchored` hands the model the exact pages the gold
     cites, which makes retrieval an upper bound: a real system has to find those
     pages first. The mode is recorded in the model's name on every result.
-16. **The current items are machine-drafted.** Their figures are verified to be on
-    the cited page and their arithmetic is recomputed by test, but no human has
-    confirmed each figure is the row its question means. They live in
-    `data/items_draft.jsonl` and are not loaded as benchmark items.
+16. **The current items are machine-drafted and have not been page-level human
+    reviewed.** Their figures are verified to appear on the cited page
+    (`scripts/verify_drafts.py`, 26/26) and their arithmetic is recomputed by test,
+    but nobody has confirmed that each figure is the row its question means —
+    consolidated vs standalone, "revenue" vs "revenue net of GST",
+    attributable-to-owners vs total. They were promoted on instruction, and
+    `data/promotions.jsonl` says so in the reviewer field. This is the weakest
+    claim in the repository and it should be fixed before anything is published.
 
 ## Repository layout
 

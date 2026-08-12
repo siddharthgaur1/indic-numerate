@@ -35,7 +35,7 @@ REQUIRED_CAVEATS = [
     "Fiscal years are limited to FY2024",
     "only the latest submission is",
     "changes what `retrieval` means",
-    "The current items are machine-drafted",
+    "machine-drafted and have not been page-level human",
 ]
 
 
