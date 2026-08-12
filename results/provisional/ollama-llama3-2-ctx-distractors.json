@@ -1,0 +1,51 @@
+{
+  "model": "ollama/llama3.2 [ctx=distractors]",
+  "n_items": 4,
+  "axes": {
+    "retrieval": 0.0,
+    "units": 0.0,
+    "intermediate": 0.0,
+    "final": 0.0
+  },
+  "all_axes_correct": 0.0,
+  "final_only_correct": 0.0,
+  "cancelling_error_gap": 0.0,
+  "by_depth": {
+    "2": {
+      "retrieval": 0.0,
+      "units": 0.0,
+      "intermediate": 0.0,
+      "final": 0.0
+    },
+    "4": {
+      "retrieval": 0.0,
+      "units": 0.0,
+      "intermediate": 0.0,
+      "final": 0.0
+    }
+  },
+  "unit_trap_subset": {
+    "retrieval": 0.0,
+    "units": 0.0,
+    "intermediate": 0.0,
+    "final": 0.0,
+    "n": 1.0
+  },
+  "no_trap_subset": {
+    "retrieval": 0.0,
+    "units": 0.0,
+    "intermediate": 0.0,
+    "final": 0.0,
+    "n": 3.0
+  },
+  "strata": {
+    "sector": {
+      "energy": 1,
+      "fmcg": 2,
+      "it_services": 1
+    },
+    "fiscal_year": {
+      "FY2025": 4
+    }
+  }
+}

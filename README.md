@@ -8,13 +8,19 @@ Sibling of [indic-reg-bench](https://github.com/siddharthgaur1/indic-reg-bench)
 (regulatory text classification). Same licence, same conventions, same rules about
 what may be claimed. Apache-2.0.
 
-> **Status: corpus fetched, no items yet.** The schema, guidelines, scorers,
-> harness and validators are complete and tested, and the corpus is real: 92
-> annual reports from 49 NIFTY 50 companies, each pinned by SHA-256
-> (`data/corpus.jsonl`), split train/test. **No benchmark items exist yet** and no
-> baselines have been run. Every number below that depends on items is stated as
-> pending, not estimated. Items are authored by hand from those reports; nothing in
-> this repository generates a document, a question, or a gold answer.
+> **Status: corpus fetched, items are drafts only.** The schema, guidelines,
+> scorers, harness and validators are complete and tested, and the corpus is real:
+> 92 annual reports from 49 NIFTY 50 companies, each pinned by SHA-256
+> (`data/corpus.jsonl`), split train/test.
+>
+> **`data/items.jsonl` — the benchmark itself — is still empty.** What exists is
+> `data/items_draft.jsonl`: 10 machine-drafted candidate items whose every figure
+> has been checked to appear on the page it cites, and whose every chain has been
+> recomputed in Decimal. That is not the same as reviewed. A person still has to
+> confirm each figure is the row the question is about, via
+> `scripts/promote_items.py`, which refuses to run without a named reviewer.
+> Until then there are no benchmark items, the leaderboard is empty, and the one
+> baseline that has been run is filed under `results/provisional/`.
 
 ---
 
@@ -73,22 +79,58 @@ this table disagrees with `data/`, so the README cannot quietly go stale.
 
 ## Oracle ceiling
 
-**Pending — no items exist yet.**
+**Run on the 10 draft items: all three attacks score 0.000 against a chance
+baseline of 0.069, so nothing beats chance. This number is not yet meaningful.**
 
-Before any result is published, `scripts/oracle_ceiling.py` must pass. It attempts
-to score the test split using only the question text and metadata, without reading
-any document, via three attacks (copy a number from the question, answer the train
-median, copy the nearest train question's answer) and compares them to a
-permutation baseline. If any attack beats chance by more than the threshold, the
-benchmark is circular and results must not be published.
+```
+permutation baseline (chance) : 0.069
+question-numbers              : 0.000  (-0.069 vs chance)
+train-prior                   : 0.000  (-0.069 vs chance)
+nearest-question              : 0.000  (-0.069 vs chance)
+```
 
-The oracle result belongs next to the headline scores, and this README will carry
-it there. Until it has been run on real items, this section says pending.
+With 6 train and 4 test items, the test split is far too small for this to say
+anything about the benchmark. A clean oracle result over four items is what you
+would expect from four items that happen not to leak; it is not evidence that a
+hundred items will not. **The number to quote is the one from the full item set,
+and it does not exist yet.** Reproduce with:
+
+```bash
+python scripts/oracle_ceiling.py --items data/items_draft.jsonl
+```
+
+The gate itself is real: `scripts/oracle_ceiling.py` attempts to score the test
+split using only question text and metadata, without reading any document, via
+three attacks (copy a number from the question, answer the train median, copy the
+nearest train question's answer). If any beats chance by more than the threshold,
+the benchmark is circular and results must not be published. `scripts/export_hf.py`
+refuses to publish if it fails.
 
 ## Leaderboard
 
-See [LEADERBOARD.md](LEADERBOARD.md). **Empty** — no baselines have been run.
-When they are, they will be three models the maintainer did not build.
+See [LEADERBOARD.md](LEADERBOARD.md). **Empty, and it stays empty until items are
+reviewed.** A leaderboard built on unreviewed gold would be the exact thing this
+repository exists to avoid.
+
+### Provisional baseline (not a result)
+
+One model has been run, over the 4 draft test items, with the document supplied as
+the anchored pages plus four seeded distractor pages:
+
+| model | n | retrieval | units | intermediate | final | all four |
+|---|---|---|---|---|---|---|
+| ollama/llama3.2 (3B) | 4 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+
+Two of the four responses were not valid JSON; of the two that parsed, the model
+reported figures that appear nowhere in the document (`19 thousand`, `10 lakh`)
+and omitted a final answer entirely. So the zero is a genuine failure to do the
+task, not a harness artifact — but n=4, on unreviewed items, with a 3B model, is
+worth nothing as a published number. It lives in `results/provisional/` and is
+excluded from the leaderboard by `--provisional`.
+
+The two API adapters ship and are tested, but **no API-model baseline has been
+run**: no API key was available in this environment, and a number nobody produced
+is not a number this README will print.
 
 ## Limitations
 
@@ -146,6 +188,15 @@ These are load-bearing. They stay in this file; diluting one is a regression.
 14. **Where a company filed a revised annual report, only the latest submission is
     in the corpus.** The superseded filing is dropped, not recorded as a second
     document.
+15. **How much document a model sees changes what `retrieval` means.** The runner
+    has three context modes (`none`, `anchored`, `distractors`) and scores across
+    them are not comparable. `anchored` hands the model the exact pages the gold
+    cites, which makes retrieval an upper bound: a real system has to find those
+    pages first. The mode is recorded in the model's name on every result.
+16. **The current items are machine-drafted.** Their figures are verified to be on
+    the cited page and their arithmetic is recomputed by test, but no human has
+    confirmed each figure is the row its question means. They live in
+    `data/items_draft.jsonl` and are not loaded as benchmark items.
 
 ## Repository layout
 
@@ -189,8 +240,19 @@ python scripts/build_sources.py          # source list from the NIFTY 50 frame
 python scripts/fetch_reports.py          # ~1.9 GB of real PDFs, hashed as fetched
 python scripts/fetch_reports.py --verify # confirm your copies match the corpus index
 python scripts/build_splits.py
+
+python scripts/draft_items.py            # candidate items -> data/items_draft.jsonl
+python scripts/verify_drafts.py          # every figure must be on the page it cites
+python scripts/promote_items.py --list   # review, then promote with --reviewed-by
 python scripts/oracle_ceiling.py         # must pass before any result is published
-python scripts/run_eval.py --adapter ollama:llama3.2
+python scripts/run_eval.py --adapter ollama:llama3.2 --context distractors
+```
+
+Authoring your own items instead:
+
+```bash
+python scripts/write_items.py --split train      # seeded draw, resumable
+python scripts/inspect_doc.py infy-fy2025 --sections
 ```
 
 ## Submitting

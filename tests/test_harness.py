@@ -13,7 +13,9 @@ import pytest
 
 from fixtures import VALID, item
 from indic_numerate.adapters import EchoAdapter, build
-from indic_numerate.runner import Cache, build_prompt, cache_key, extract_json, predict, run
+from indic_numerate.runner import (
+    Cache, build_context, build_prompt, cache_key, extract_json, predict, run,
+)
 from indic_numerate.schema import Item
 from indic_numerate.scoring import item_correct, score_item
 from indic_numerate.submission import SubmissionError, validate
@@ -76,6 +78,25 @@ def test_prompt_does_not_leak_gold_values():
         assert step.description not in p
 
 
+def test_context_none_is_empty():
+    assert build_context(GOLD, "none") == ""
+
+
+def test_context_rejects_an_unknown_mode():
+    with pytest.raises(ValueError, match="unknown context mode 'everything'"):
+        build_context(GOLD, "everything")
+
+
+def test_context_requires_the_document_rather_than_inventing_one(tmp_path):
+    with pytest.raises(FileNotFoundError, match="fetch_reports.py"):
+        build_context(GOLD, "anchored", pdf_dir=tmp_path)
+
+
+def test_prompt_carries_the_context_when_given():
+    p = build_prompt(GOLD, "Document extract (1 pages):\n--- page 84 ---\nRevenue 1200")
+    assert "--- page 84 ---" in p and GOLD.question in p
+
+
 def test_extract_json_from_fenced_prose():
     assert extract_json('Sure!\n```json\n{"a": 1}\n```\nHope that helps') == {"a": 1}
 
@@ -89,19 +110,19 @@ def test_extract_json_names_the_response_when_there_is_none():
 
 
 def test_predict_scores_a_good_response():
-    pred, note = predict(GOLD, EchoAdapter(GOOD_RESPONSE), cache=None)
+    pred, note = predict(GOLD, EchoAdapter(GOOD_RESPONSE), cache=None, context_mode="none")
     assert note == "called" and item_correct(score_item(GOLD, pred))
 
 
 def test_unparseable_response_scores_zero_rather_than_raising():
-    pred, note = predict(GOLD, EchoAdapter("I don't know."), cache=None)
+    pred, note = predict(GOLD, EchoAdapter("I don't know."), cache=None, context_mode="none")
     assert "unparseable" in note
     assert not item_correct(score_item(GOLD, pred))
 
 
 def test_malformed_prediction_scores_zero_rather_than_raising():
     bad = json.dumps({"figures": {"f1": "1200 crore"}, "final_value": 20, "final_unit": "percent"})
-    pred, note = predict(GOLD, EchoAdapter(bad), cache=None)
+    pred, note = predict(GOLD, EchoAdapter(bad), cache=None, context_mode="none")
     assert "malformed" in note and pred.final_value is None
 
 
@@ -118,8 +139,8 @@ class CountingAdapter(EchoAdapter):
 def test_cache_prevents_a_second_call(tmp_path):
     adapter = CountingAdapter(GOOD_RESPONSE)
     cache = Cache(tmp_path)
-    predict(GOLD, adapter, cache)
-    _, note = predict(GOLD, adapter, cache)
+    predict(GOLD, adapter, cache, context_mode="none")
+    _, note = predict(GOLD, adapter, cache, context_mode="none")
     assert adapter.calls == 1 and note == "cached"
 
 
@@ -142,7 +163,7 @@ def test_cache_key_is_stable_for_the_same_inputs():
 
 def test_run_returns_one_prediction_per_item(tmp_path, capsys):
     items = [GOLD, Item.model_validate(item(item_id="fixture-002"))]
-    preds = run(items, EchoAdapter(GOOD_RESPONSE), tmp_path)
+    preds = run(items, EchoAdapter(GOOD_RESPONSE), tmp_path, context_mode="none")
     assert set(preds) == {"fixture-001", "fixture-002"}
 
 

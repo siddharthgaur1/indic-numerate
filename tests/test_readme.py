@@ -34,6 +34,8 @@ REQUIRED_CAVEATS = [
     "Constituents are as of the fetch date",
     "Fiscal years are limited to FY2024",
     "only the latest submission is",
+    "changes what `retrieval` means",
+    "The current items are machine-drafted",
 ]
 
 
@@ -60,13 +62,19 @@ def test_readme_does_not_claim_results_while_there_are_none():
     """Guards the specific failure mode of publishing numbers before the oracle
     ceiling has been run: while there are zero items, the README must say so."""
     if current_counts(ROOT)["items"] == 0:
-        assert "No benchmark items exist yet" in README
-        assert "Pending" in README or "pending" in README
-        assert "no baselines have been run" in README.lower()
+        assert "is still empty" in README
+        # and the leaderboard must carry no result rows
+        board = (ROOT / "LEADERBOARD.md").read_text(encoding="utf-8")
+        assert "_no results yet_" in board, (
+            "there are no reviewed items, so the leaderboard must have no rows"
+        )
+        # any baseline that has been run must be labelled provisional
+        if "baseline" in README.lower():
+            assert "rovisional" in README
 
 
 def test_decomposition_rationale_leads_the_readme():
-    head = README[:2000]
+    head = README[: README.index("## Corpus at a glance")]
     assert "decomposition" in head.lower()
     assert "retrieval" in head and "units" in head and "intermediate" in head
 
