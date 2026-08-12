@@ -9,13 +9,13 @@ split filter, and the report -- every consumer downstream of the split.
 from __future__ import annotations
 
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import pytest
 
 from indic_numerate.corpus import Document
-from indic_numerate.splits import assign_splits, stratum_counts, stratum_of
+from indic_numerate.splits import assign_splits, company_key, stratum_counts, stratum_of
 
 ROOT = Path(__file__).resolve().parents[1]
 SECTORS = ["banking", "it_services", "pharma", "auto", "energy"]
@@ -24,16 +24,22 @@ YEARS = ["FY2021", "FY2022", "FY2023"]
 
 def population(per_cell: int = 6) -> list[Document]:
     """A corpus in the worst realistic order: grouped by sector, then by year --
-    exactly what a scraper that walks a sector index produces."""
+    exactly what a scraper that walks a sector index produces.
+
+    Each company files in EVERY year, as real issuers do. That is what makes
+    company-level splitting necessary: a later report carries the earlier year's
+    figures as comparatives.
+    """
     docs = []
     for sector in SECTORS:
-        for year in YEARS:
-            for k in range(per_cell):
+        for c in range(per_cell):
+            company = f"{sector.title()} Company {c} Limited"
+            for year in YEARS:
                 i = len(docs)
                 docs.append(
                     Document(
                         doc_id=f"doc-{i:03d}",
-                        company=f"Company {i}",
+                        company=company,
                         sector=sector,
                         fiscal_year=year,
                         source_url=f"https://example.invalid/{i}.pdf",
@@ -53,13 +59,42 @@ def runs(labels: list[str]) -> int:
 # --- the split itself ------------------------------------------------------
 
 
-def test_every_stratum_is_split_not_just_the_population():
+def test_no_company_straddles_the_split():
+    """The invariant the oracle ceiling caught us breaking. A company's FY2025
+    report prints its FY2024 figures as comparatives, so one company on both
+    sides puts test answers in the training set verbatim."""
+    docs = population()
+    splits = assign_splits(docs)
+    sides = defaultdict(set)
+    for doc in docs:
+        sides[company_key(doc)].add(splits[doc.doc_id])
+    straddlers = [c for c, s in sides.items() if len(s) > 1]
+    assert not straddlers, f"companies in both splits: {straddlers[:5]}"
+
+
+def test_company_name_variants_group_together():
+    """'Infosys Ltd.' and 'Infosys Limited' are one company, whatever the index
+    called them on the day each row was written."""
+    assert company_key(_doc("Infosys Limited")) == company_key(_doc("Infosys Ltd."))
+    assert company_key(_doc("Infosys  Ltd")) == company_key(_doc("infosys limited"))
+    assert company_key(_doc("Wipro Limited")) != company_key(_doc("Infosys Limited"))
+
+
+def _doc(company: str) -> Document:
+    return Document(
+        doc_id="doc-000", company=company, sector="it_services", fiscal_year="FY2025",
+        source_url="https://example.invalid/x.pdf", fetched_at="2026-01-01T00:00:00+00:00",
+        sha256="0" * 64, n_bytes=1,
+    )
+
+
+def test_every_sector_is_split_not_just_the_population():
     docs = population()
     splits = assign_splits(docs, 1 / 3)
-    for cell in {stratum_of(d) for d in docs}:
-        members = [d for d in docs if stratum_of(d) == cell]
-        n_test = sum(splits[d.doc_id] == "test" for d in members)
-        assert n_test == 2, f"stratum {cell} put {n_test}/6 in test, expected 2"
+    for sector in SECTORS:
+        companies = {company_key(d) for d in docs if d.sector == sector}
+        in_test = {company_key(d) for d in docs if d.sector == sector and splits[d.doc_id] == "test"}
+        assert len(in_test) == 2, f"sector {sector} put {len(in_test)}/{len(companies)} companies in test"
 
 
 def test_split_is_deterministic():
@@ -67,8 +102,8 @@ def test_split_is_deterministic():
     assert assign_splits(docs) == assign_splits(docs)
 
 
-def test_singleton_stratum_goes_to_train():
-    """A one-document cell in test would make that cell's score a coin flip."""
+def test_singleton_sector_goes_to_train():
+    """A one-company sector in test would make that cell's score a coin flip."""
     docs = population(per_cell=1)
     splits = assign_splits(docs)
     assert set(splits.values()) == {"train"}
@@ -90,7 +125,7 @@ def test_adding_a_sector_does_not_reshuffle_existing_ones():
     docs = population()
     before = assign_splits(docs)
     extra = Document(
-        doc_id="doc-999", company="New Co", sector="telecom", fiscal_year="FY2023",
+        doc_id="doc-999", company="New Co Limited", sector="telecom", fiscal_year="FY2023",
         source_url="https://example.invalid/999.pdf", fetched_at="2026-01-01T00:00:00+00:00",
         sha256="0" * 64, n_bytes=1,
     )
@@ -98,11 +133,15 @@ def test_adding_a_sector_does_not_reshuffle_existing_ones():
     assert {k: v for k, v in after.items() if k != "doc-999"} == before
 
 
-def test_stratum_counts_reports_both_keys():
+def test_stratum_counts_still_reports_fiscal_year_even_though_it_is_not_split_on():
+    """Fiscal year cannot be a splitting key once companies move as a unit, but
+    the balance must stay visible or nobody would notice it drifting."""
     docs = population()
     counts = stratum_counts(docs, assign_splits(docs, 1 / 3))
-    assert counts["sector"]["banking/test"] == 6  # 3 years x 2 test docs
-    assert counts["fiscal_year"]["FY2023/train"] == 20  # 5 sectors x 4 train docs
+    assert counts["sector"]["banking/test"] == 6      # 2 companies x 3 years
+    assert counts["sector"]["banking/train"] == 12    # 4 companies x 3 years
+    assert counts["fiscal_year"]["FY2023/test"] == 10  # 5 sectors x 2 test companies
+    assert counts["fiscal_year"]["FY2023/train"] == 20
 
 
 # --- the consumer: the authoring pool --------------------------------------

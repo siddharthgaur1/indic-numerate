@@ -51,6 +51,9 @@ reporting a mixture of skill and luck.
 
 This is enforced by the schema, not by convention:
 
+* splits are assigned per **company**, not per document: a company's later report
+  prints its earlier report's figures as comparatives, so splitting its documents
+  apart puts test answers in the training set,
 * every declared figure must be consumed by a step (no decoy gold),
 * `reasoning_depth` must equal the number of steps,
 * the final answer must *be* the last step, so it cannot be computed off-chain,
@@ -67,9 +70,9 @@ An item that cannot be scored on all four axes does not parse.
 | | |
 |---|---|
 | documents | 91 |
-| items | 10 (6 train / 4 test) |
-| unit-trap items | 5 |
-| reasoning depth | 2-step: 6, 3-step: 1, 4-step: 3 |
+| items | 15 (11 train / 4 test) |
+| unit-trap items | 7 |
+| reasoning depth | 2-step: 11, 3-step: 1, 4-step: 3 |
 | sectors / fiscal years | 12 / 2 |
 | seed | 20240917 |
 <!-- END GENERATED COUNTS -->
@@ -79,20 +82,26 @@ this table disagrees with `data/`, so the README cannot quietly go stale.
 
 ## Oracle ceiling
 
-**Run on the 10 items: all three attacks score 0.000 against a chance baseline of
-0.069, so nothing beats chance. This number is not yet meaningful.**
+**Currently passes — but it failed first, and the failure was real.**
 
 ```
-permutation baseline (chance) : 0.069
-question-numbers              : 0.000  (-0.069 vs chance)
-train-prior                   : 0.000  (-0.069 vs chance)
-nearest-question              : 0.000  (-0.069 vs chance)
+permutation baseline (chance) : 0.000
+question-numbers              : 0.000  (+0.000 vs chance)
+train-prior                   : 0.000  (+0.000 vs chance)
+nearest-question              : 0.000  (+0.000 vs chance)
 ```
 
-With 6 train and 4 test items, the test split is far too small for this to say
-anything about the benchmark. A clean oracle result over four items is what you
-would expect from four items that happen not to leak; it is not evidence that a
-hundred items will not. **The number to quote is the one from the full item set,
+At 15 items the gate caught an actual leak. The split used to be assigned per
+document, so `infy-fy2024` sat in train while `infy-fy2025` sat in test — and an
+FY2025 annual report prints the FY2024 figures as its comparative column. The
+train-prior attack scored **0.167 against a chance baseline of 0.032, +0.135 above
+chance**, and the gate failed. Splits are now assigned per company
+([the write-up](docs/bugs-that-looked-like-results.md#5-a-document-level-split-that-leaked-the-answers)).
+The tolerance was deliberately *not* tightened to make the hit disappear.
+
+With 11 train and 4 test items, the current pass says very little: a clean oracle
+result over four items is what four non-leaking items look like, not evidence that
+a hundred will be clean. **The number to quote is the one from the full item set,
 and it does not exist yet.** Reproduce with:
 
 ```bash
@@ -192,12 +201,16 @@ These are load-bearing. They stay in this file; diluting one is a regression.
 14. **Where a company filed a revised annual report, only the latest submission is
     in the corpus.** The superseded filing is dropped, not recorded as a second
     document.
-15. **How much document a model sees changes what `retrieval` means.** The runner
+15. **The test split is four items from two companies.** Splitting by company is
+    correct, but with 49 companies and items authored from only eight documents so
+    far, the test half is tiny and dominated by whichever companies happened to
+    land there. No per-sector or per-depth number from it means anything yet.
+16. **How much document a model sees changes what `retrieval` means.** The runner
     has three context modes (`none`, `anchored`, `distractors`) and scores across
     them are not comparable. `anchored` hands the model the exact pages the gold
     cites, which makes retrieval an upper bound: a real system has to find those
     pages first. The mode is recorded in the model's name on every result.
-16. **The current items are machine-drafted and have not been page-level human
+17. **The current items are machine-drafted and have not been page-level human
     reviewed.** Their figures are verified to appear on the cited page
     (`scripts/verify_drafts.py`, 26/26) and their arithmetic is recomputed by test,
     but nobody has confirmed that each figure is the row its question means —

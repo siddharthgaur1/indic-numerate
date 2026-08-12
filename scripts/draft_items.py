@@ -337,6 +337,137 @@ def build() -> list[dict]:
         reasoning_depth=4, unit_trap=True, sector="fmcg", fiscal_year="FY2025", split="test",
     ))
 
+    # ------------------------------------------------------------ bharti airtel
+    # bhartiartl-fy2025.pdf p201, Consolidated Statement of Profit and Loss,
+    # "All amounts are in millions of Indian Rupee".
+    ar25, ar24 = D("1729852"), D("1499824")
+    adiff = ar25 - ar24
+    items.append(dict(
+        item_id="bhartiartl-fy2025-d01",
+        question=("In Bharti Airtel's consolidated statement of profit and loss for the year ended "
+                  "31 March 2025, by what percentage did revenue from operations grow against the "
+                  "comparative year?"),
+        doc_id="bhartiartl-fy2025",
+        figures=[
+            fig("f1", "Revenue from operations, year ended 31 March 2025", ar25, "million", 201,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Revenue from operations, year ended 31 March 2024 (comparative)", ar24,
+                "million", 201, "Consolidated Statement of Profit and Loss", "FY2024"),
+        ],
+        steps=[
+            step("s1", "Growth in revenue from operations", "subtract", ["f1", "f2"], adiff, "million"),
+            step("s2", "Growth as a percentage of the comparative year", "percent_change", ["s1", "f2"],
+                 q(adiff / ar24 * 100), "percent"),
+        ],
+        final_value=str(q(adiff / ar24 * 100)), final_unit="percent",
+        tolerance={"mode": "absolute", "value": "0.05"},
+        reasoning_depth=2, unit_trap=False, sector="telecom", fiscal_year="FY2025", split="train",
+    ))
+
+    ati25 = D("1745589")
+    aother = ati25 - ar25
+    items.append(dict(
+        item_id="bhartiartl-fy2025-d02",
+        question=("Bharti Airtel's consolidated statement of profit and loss for the year ended "
+                  "31 March 2025 reports revenue from operations and a total income figure beneath "
+                  "it. What was other income for that year, in Rs crore?"),
+        doc_id="bhartiartl-fy2025",
+        figures=[
+            fig("f1", "Total of income, year ended 31 March 2025", ati25, "million", 201,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Revenue from operations, year ended 31 March 2025", ar25, "million", 201,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+        ],
+        steps=[
+            step("s1", "Total income less revenue from operations", "subtract", ["f1", "f2"], aother, "million"),
+            step("s2", "Converted from million to crore", "convert", ["s1"], q(aother / 10, "0.01"), "crore"),
+        ],
+        final_value=str(q(aother / 10, "0.01")), final_unit="crore",
+        tolerance={"mode": "relative", "value": "0.005"},
+        reasoning_depth=2, unit_trap=True, sector="telecom", fiscal_year="FY2025", split="train",
+    ))
+
+    aexp = D("798260")
+    aebitda = ati25 - aexp
+    items.append(dict(
+        item_id="bhartiartl-fy2025-d03",
+        question=("From Bharti Airtel's consolidated statement of profit and loss for the year ended "
+                  "31 March 2025, what was the excess of total income over the expenses subtotal "
+                  "shown before depreciation, amortisation and finance costs, as a share of total "
+                  "income? Give the answer as a ratio."),
+        doc_id="bhartiartl-fy2025",
+        figures=[
+            fig("f1", "Total of income, year ended 31 March 2025", ati25, "million", 201,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Expenses subtotal before depreciation, amortisation and finance costs, "
+                      "year ended 31 March 2025", aexp, "million", 201,
+                "Consolidated Statement of Profit and Loss", "FY2025"),
+        ],
+        steps=[
+            step("s1", "Total income less that expenses subtotal", "subtract", ["f1", "f2"], aebitda, "million"),
+            step("s2", "That excess as a share of total income", "divide", ["s1", "f1"],
+                 q(aebitda / ati25, "0.000001"), "ratio"),
+        ],
+        final_value=str(q(aebitda / ati25, "0.000001")), final_unit="ratio",
+        tolerance={"mode": "absolute", "value": "0.0005"},
+        reasoning_depth=2, unit_trap=False, sector="telecom", fiscal_year="FY2025", split="train",
+    ))
+
+    # ---------------------------------------------------------- coal india (test)
+    # coalindia-fy2025.pdf p219. The page heading says "STATEMENT OF PROFIT AND
+    # LOSS - STANDALONE" in its own text, so the question pins standalone. This is
+    # the holding company alone, where most income is dividend from subsidiaries.
+    csales, cother_op = D("177.08"), D("1417.09")
+    crev = csales + cother_op
+    cti = D("18221.46")
+    items.append(dict(
+        item_id="coalindia-fy2025-d01",
+        question=("In Coal India's standalone statement of profit and loss for the year ended "
+                  "31 March 2025, what was revenue from operations (net of levies) as a share of "
+                  "total income? Give the answer as a ratio."),
+        doc_id="coalindia-fy2025",
+        figures=[
+            fig("f1", "Sales, year ended 31 March 2025 (standalone)", csales, "crore", 219,
+                "Standalone Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Other Operating Revenue, year ended 31 March 2025 (standalone)", cother_op,
+                "crore", 219, "Standalone Statement of Profit and Loss", "FY2025"),
+            fig("f3", "Total income (I+II), year ended 31 March 2025 (standalone)", cti, "crore", 219,
+                "Standalone Statement of Profit and Loss", "FY2025"),
+        ],
+        steps=[
+            step("s1", "Revenue from operations as sales plus other operating revenue", "add",
+                 ["f1", "f2"], q(crev, "0.01"), "crore"),
+            step("s2", "Revenue from operations as a share of total income", "divide", ["s1", "f3"],
+                 q(crev / cti, "0.000001"), "ratio"),
+        ],
+        final_value=str(q(crev / cti, "0.000001")), final_unit="ratio",
+        tolerance={"mode": "absolute", "value": "0.0005"},
+        reasoning_depth=2, unit_trap=False, sector="energy", fiscal_year="FY2025", split="test",
+    ))
+
+    cother = D("16627.29")
+    items.append(dict(
+        item_id="coalindia-fy2025-d02",
+        question=("Using Coal India's standalone statement of profit and loss for the year ended "
+                  "31 March 2025, what percentage of total income came from other income rather "
+                  "than from operations?"),
+        doc_id="coalindia-fy2025",
+        figures=[
+            fig("f1", "Other Income, year ended 31 March 2025 (standalone)", cother, "crore", 219,
+                "Standalone Statement of Profit and Loss", "FY2025"),
+            fig("f2", "Total income (I+II), year ended 31 March 2025 (standalone)", cti, "crore", 219,
+                "Standalone Statement of Profit and Loss", "FY2025"),
+        ],
+        steps=[
+            step("s1", "Other income as a share of total income", "divide", ["f1", "f2"],
+                 q(cother / cti, "0.000001"), "ratio"),
+            step("s2", "Share expressed as a percentage", "convert", ["s1"], q(cother / cti * 100), "percent"),
+        ],
+        final_value=str(q(cother / cti * 100)), final_unit="percent",
+        tolerance={"mode": "absolute", "value": "0.02"},
+        reasoning_depth=2, unit_trap=True, sector="energy", fiscal_year="FY2025", split="test",
+    ))
+
     return items
 
 
