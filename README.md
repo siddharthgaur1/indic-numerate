@@ -18,9 +18,9 @@ what may be claimed. Apache-2.0.
 > (`data/corpus.jsonl`), every one confirmed to open with a text layer, split
 > train/test.
 >
-> **`data/items.jsonl` holds 10 items (6 train / 4 test), and they have NOT been
+> **`data/items.jsonl` holds 19 items (11 train / 8 test), and they have NOT been
 > page-level human reviewed.** They were machine-drafted, auto-verified to appear
-> on the pages they cite (26/26 figures), arithmetically recomputed in Decimal by
+> on the pages they cite (45/45 figures), arithmetically recomputed in Decimal by
 > test, and then promoted on the maintainer's instruction. `data/promotions.jsonl`
 > records that explicitly: no reviewer has confirmed that each figure is the row
 > its question means. Until someone does, treat these as provisional gold — and
@@ -239,7 +239,7 @@ These are load-bearing. They stay in this file; diluting one is a regression.
     pages first. The mode is recorded in the model's name on every result.
 17. **The current items are machine-drafted and have not been page-level human
     reviewed.** Their figures are verified to appear on the cited page
-    (`scripts/verify_drafts.py`, 26/26) and their arithmetic is recomputed by test,
+    (`scripts/verify_drafts.py`, 45/45) and their arithmetic is recomputed by test,
     but nobody has confirmed that each figure is the row its question means —
     consolidated vs standalone, "revenue" vs "revenue net of GST",
     attributable-to-owners vs total. They were promoted on instruction, and
