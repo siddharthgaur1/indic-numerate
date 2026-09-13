@@ -26,6 +26,10 @@ what may be claimed. Apache-2.0.
 > its question means. Until someone does, treat these as provisional gold — and
 > the leaderboard stays empty.
 
+![Corpus documents by sector and fiscal year](docs/corpus-by-sector.png)
+
+*The fetched corpus by sector and fiscal year, counted from `data/corpus.jsonl`. Regenerate: `python scripts/make_readme_chart.py`.*
+
 ---
 
 ## Why decomposition scoring
